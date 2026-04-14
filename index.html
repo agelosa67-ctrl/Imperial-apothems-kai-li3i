@@ -451,28 +451,63 @@
 
     window.filterCurrentTab = () => renderTab(activeTab, document.getElementById('search').value);
 
-    window.exportPDF = () => {
-      let all = []; const catNames = { tab1:'Ιορδάνου', tab2:'Μπικρέ', tab3:'Θάσος food', tab4:'Ξενοδοχείο ξηρά' };
-      for (let t in tabData) tabData[t].products.forEach(p => all.push({cat: catNames[t], ...p}));
-      let html = `<html><head><meta charset="UTF-8"><title>Αποθήκη THASSOS</title><style>
-        body{font-family:system-ui;padding:20px} table{width:100%;border-collapse:collapse;} th{background:#1e2b3c;color:white;padding:6px}
-        td{border:1px solid #ccc;padding:5px} .red-bg{background:#fee2e2}</style></head><body>
-        <h1>THASSOS IMPERIAL</h1><p>Ημ/νία: ${new Date().toLocaleDateString('el')} | Ειδοποίηση λήξης: ${expiryWarningDays} ημέρες</p>`;
-      const groups = {}; all.forEach(i => { if(!groups[i.cat]) groups[i.cat]=[]; groups[i.cat].push(i); });
-      for (let cat in groups) {
-        html += `<h2>${cat}</h2><table><tr><th>Προϊόν</th><th>Ποσότητα</th><th>Μονάδα</th><th>Λήξη</th><th>Ελάχ.</th></tr>`;
-        groups[cat].forEach(p => {
-          const qty = p.quantity===0?'':(p.unit==='kg'? p.quantity.toFixed(1):p.quantity);
-          const exp = p.expiry ? formatDateForDisplay(p.expiry) : '';
-          const low = p.quantity <= p.minStock;
-          const soon = exp && isExpiringSoon(p.expiry);
-          html += `<tr><td>${escapeHtml(p.name)}</td><td class="${low?'red-bg':''}">${qty}</td><td>${p.unit}</td><td class="${soon?'red-bg':''}">${exp}</td><td>${p.minStock}</td></tr>`;
-        });
-        html += '</table>';
+  window.exportPDF = () => {
+  let all = [];
+  const catNames = { tab1:'Ιορδάνου', tab2:'Μπικρέ', tab3:'Θάσος food', tab4:'Ξενοδοχείο ξηρά' };
+  
+  // Φιλτράρουμε: μόνο όσα έχουν ποσότητα > 0 Ή έχουν ημερομηνία λήξης
+  for (let t in tabData) {
+    tabData[t].products.forEach(p => {
+      if (p.quantity > 0 || (p.expiry && p.expiry.trim() !== '')) {
+        all.push({ cat: catNames[t], ...p });
       }
-      html += '</body></html>';
-      const w = window.open(); w.document.write(html); w.document.close(); w.print();
-    };
+    });
+  }
+  
+  if (!all.length) {
+    alert('Δεν υπάρχουν προϊόντα με ποσότητα ή ημερομηνία λήξης για εξαγωγή.');
+    return;
+  }
+
+  let html = `<html><head><meta charset="UTF-8"><title>THASSOS IMPERIAL · Ενεργά είδη</title><style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 20px; }
+    h1 { color: #1e2b3c; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th { background: #1e2b3c; color: white; padding: 8px; }
+    td { border: 1px solid #ccc; padding: 6px; }
+    .red-bg { background: #fee2e2; }
+    .exp-bg { background: #fff3cd; }
+  </style></head><body>
+    <h1>THASSOS IMPERIAL · Ενεργά αποθέματα & λήξεις</h1>
+    <p>Ημερομηνία: ${new Date().toLocaleDateString('el')} &nbsp;|&nbsp; Όριο ειδοποίησης: ${expiryWarningDays} ημέρες</p>`;
+
+  const groups = {};
+  all.forEach(i => { if (!groups[i.cat]) groups[i.cat] = []; groups[i.cat].push(i); });
+
+  for (let cat in groups) {
+    html += `<h2>${cat}</h2><table><tr><th>Προϊόν</th><th>Ποσότητα</th><th>Μονάδα</th><th>Λήξη</th><th>Ελάχ.</th></tr>`;
+    groups[cat].forEach(p => {
+      const qty = (p.quantity === 0) ? '' : (p.unit === 'kg' ? p.quantity.toFixed(1) : p.quantity);
+      const exp = p.expiry ? formatDateForDisplay(p.expiry) : '';
+      const low = (p.quantity > 0 && p.quantity <= p.minStock);
+      const soon = exp && isExpiringSoon(p.expiry);
+      html += `<tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td class="${low ? 'red-bg' : ''}">${qty}</td>
+        <td>${p.unit === 'boxes' ? 'Κιβώτιο' : p.unit === 'pieces' ? 'Τεμάχια' : p.unit === 'kg' ? 'Κιλά' : 'Παλέτα'}</td>
+        <td class="${soon ? 'exp-bg' : ''}">${exp}</td>
+        <td>${p.minStock}</td>
+      </tr>`;
+    });
+    html += '</table>';
+  }
+  html += '<p style="margin-top:30px; font-size:12px;">THASSOS IMPERIAL · Εξαγωγή μόνο ειδών με απόθεμα ή ημερομηνία</p></body></html>';
+
+  const w = window.open();
+  w.document.write(html);
+  w.document.close();
+  w.print();
+};
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));

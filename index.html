@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>THASSOS IMPERIAL · Αποθήκη</title>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f5f7fb; margin: 0; padding: 0 0 20px; color: #1e2b3c; }
+    header { background: #1e2b3c; color: white; padding: 18px 16px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    header h1 { font-weight: 500; letter-spacing: 3px; font-size: 1.6rem; }
+    header small { opacity: 0.8; display: block; margin-top: 4px; }
+    .tabs-container { background: white; padding: 6px 8px 0; border-bottom: 1px solid #e2e8f0; }
+    .tabs { display: flex; overflow-x: auto; gap: 6px; }
+    .tab { padding: 12px 20px; font-weight: 600; background: #f1f5f9; border-radius: 24px 24px 0 0; color: #334155; cursor: pointer; transition: 0.15s; border: 1px solid transparent; border-bottom: none; font-size: 14px; }
+    .tab.active { background: #1e2b3c; color: white; }
+    .toolbar { background: white; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-bottom: 1px solid #e9eef4; position: sticky; top: 0; z-index: 8; }
+    .search-wrapper { flex: 2 1 180px; position: relative; }
+    .search-wrapper i { position: absolute; left: 15px; top: 13px; color: #7e8c9e; }
+    #search { width: 100%; padding: 12px 12px 12px 42px; border: 1px solid #d0d9e4; border-radius: 40px; font-size: 15px; background: #fafcff; outline: none; }
+    .action-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .btn { background: #f1f5f9; border: none; padding: 8px 12px; border-radius: 40px; font-weight: 600; font-size: 13px; color: #1e2b3c; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid #dee6ed; }
+    .btn-primary { background: #1e2b3c; color: white; border-color: #1e2b3c; }
+    .btn-danger { background: #b91c1c; color: white; border-color: #b91c1c; }
+    .expiry-limit-box { display: flex; align-items: center; gap: 5px; background: #eef2f6; border-radius: 40px; padding: 2px 10px; }
+    .expiry-limit-box label { font-size: 12px; font-weight: 500; }
+    .expiry-limit-box input { width: 60px; border: none; background: white; border-radius: 20px; padding: 6px 6px; text-align: center; font-weight: 600; outline: none; }
+    .inventory-container { padding: 16px 12px; }
+    .category-pane { display: none; }
+    .category-pane.active { display: block; }
+    .product-list { display: flex; flex-direction: column; gap: 10px; }
+    .product-card { background: white; border-radius: 20px; padding: 12px 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.02); border: 1px solid #eef2f6; }
+    .drag-area { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .drag-handle { font-size: 22px; color: #8b9aaf; cursor: grab; padding: 0 4px; }
+    .product-info { flex: 1; }
+    .product-name { font-weight: 700; font-size: 16px; color: #0b1a26; }
+    .product-meta { font-size: 12px; color: #64748b; margin-top: 2px; }
+    .product-actions { display: flex; gap: 2px; }
+    .icon-btn { background: none; border: none; font-size: 15px; padding: 6px; border-radius: 30px; color: #62748c; cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .icon-btn:hover { background: #eef2f6; }
+    .delete-btn { color: #b91c1c; }
+    .stock-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 4px; }
+    .qty-wrapper { display: flex; align-items: center; gap: 2px; }
+    .qty-control { display: flex; align-items: center; background: #f1f5f9; border-radius: 36px; padding: 2px; }
+    .qty-control button { width: 34px; height: 34px; border-radius: 50%; border: none; background: white; color: #1e2b3c; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-control input { width: 65px; text-align: center; border: none; background: transparent; font-weight: 700; font-size: 15px; padding: 6px 0; outline: none; }
+    .qty-control input:focus { background: white; border-radius: 20px; }
+    .qty-control input::-webkit-outer-spin-button, .qty-control input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .qty-control input[type=number] { -moz-appearance: textfield; }
+    .qty-input-red { background-color: #fee2e2 !important; border-radius: 20px; }
+    .unit-select { background: #e9eef4; border: none; border-radius: 30px; padding: 6px 8px; font-size: 12px; font-weight: 600; color: #1e2b3c; outline: none; }
+    .expiry-box { display: flex; align-items: center; gap: 4px; background: #f8fafc; padding: 2px 8px; border-radius: 40px; border: 1px solid #dee6ed; }
+    .expiry-box i { color: #3a526b; font-size: 13px; }
+    .expiry-box input { border: none; background: transparent; padding: 6px 0; font-size: 13px; outline: none; width: 120px; }
+    .expiry-input-red { background-color: #fee2e2 !important; border-radius: 20px; padding: 2px 6px; }
+    .minstock-box { display: flex; align-items: center; gap: 2px; background: #eef2f6; border-radius: 30px; padding: 2px 6px; }
+    .minstock-box span { font-size: 11px; font-weight: 500; }
+    .minstock-box input { width: 50px; border: none; background: transparent; font-weight: 700; text-align: center; padding: 6px 0; outline: none; }
+    .no-results { text-align: center; padding: 40px; background: white; border-radius: 30px; color: #7c8a9a; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(3px); }
+    .modal-card { background: white; border-radius: 32px; padding: 24px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
+    .modal-card h3 { margin-bottom: 20px; color: #1e2b3c; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label { display: block; font-weight: 500; margin-bottom: 6px; }
+    .modal-field input, .modal-field select { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 30px; font-size: 15px; background: #fafcff; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .deleted-item { background: #f1f5f9; padding: 12px 16px; border-radius: 30px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-note { text-align: center; margin-top: 20px; color: #6f7e91; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>THASSOS IMPERIAL</h1>
+  <small>Αποθήκη · Λήξεις & αποθέματα</small>
+</header>
+
+<div class="tabs-container">
+  <div class="tabs">
+    <div class="tab active" data-tab="tab1">Iordanou</div>
+    <div class="tab" data-tab="tab2">Bikre ταβέρνα</div>
+    <div class="tab" data-tab="tab3">Thasos food taverna</div>
+    <div class="tab" data-tab="tab4">Ξενοδοχείο ξηρά</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="search-wrapper">
+    <i class="fas fa-search"></i>
+    <input type="text" id="search" placeholder="Αναζήτηση..." oninput="filterCurrentTab()">
+  </div>
+  <div class="expiry-limit-box">
+    <label><i class="far fa-clock"></i> Ειδοπ. λήξης (ημέρες)</label>
+    <input type="number" id="expiryWarningDays" min="0" value="10" step="1" onchange="saveWarningDays()">
+  </div>
+  <div class="action-group">
+    <button class="btn" onclick="openAddProductModal()"><i class="fas fa-plus-circle"></i> Νέο</button>
+    <button class="btn" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+    <button class="btn" onclick="showDeletedModal()"><i class="fas fa-trash-restore"></i> Διεγραμμένα</button>
+    <button class="btn btn-danger" onclick="clearAllQuantities()"><i class="fas fa-undo-alt"></i> Μηδενισμός</button>
+  </div>
+</div>
+
+<div class="inventory-container">
+  <div id="tab1" class="category-pane active"><div class="product-list" id="productList1"></div></div>
+  <div id="tab2" class="category-pane"><div class="product-list" id="productList2"></div></div>
+  <div id="tab3" class="category-pane"><div class="product-list" id="productList3"></div></div>
+  <div id="tab4" class="category-pane"><div class="product-list" id="productList4"></div></div>
+</div>
+
+<div class="footer-note">THASSOS IMPERIAL · Σύρε για ταξινόμηση · Πεδία με κόκκινο = χαμηλό απόθεμα ή λήξη</div>
+
+<!-- MODALS -->
+<div id="addProductModal" class="modal" onclick="closeModal('addProductModal', event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <h3><i class="fas fa-box"></i> Νέο προϊόν</h3>
+    <div class="modal-field"><label>Όνομα</label><input type="text" id="newName" placeholder="π.χ. Ελαιόλαδο"></div>
+    <div class="modal-field"><label>Μονάδα</label><select id="newUnit"><option value="boxes">Κιβώτιο</option><option value="pieces">Τεμάχια</option><option value="kg">Κιλά</option><option value="pallet">Παλέτα</option></select></div>
+    <div class="modal-field"><label>Ελάχιστο απόθεμα</label><input type="number" id="newMinStock" min="0" value="5"></div>
+    <div class="modal-field"><label>Ημερομηνία λήξης (π.χ. 31/12/2026)</label><input type="text" id="newExpiry" placeholder="ΗΜ/ΜΗ/ΕΤΟΣ"></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="addNewProduct()" style="flex:2">Προσθήκη</button><button class="btn" onclick="closeModal('addProductModal')" style="flex:1">Άκυρο</button></div>
+  </div>
+</div>
+
+<div id="editProductModal" class="modal" onclick="closeModal('editProductModal', event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <h3><i class="fas fa-pen"></i> Επεξεργασία</h3>
+    <input type="hidden" id="editTabId"><input type="hidden" id="editIndex">
+    <div class="modal-field"><label>Όνομα</label><input type="text" id="editName"></div>
+    <div class="modal-field"><label>Μονάδα</label><select id="editUnit"><option value="boxes">Κιβώτιο</option><option value="pieces">Τεμάχια</option><option value="kg">Κιλά</option><option value="pallet">Παλέτα</option></select></div>
+    <div class="modal-field"><label>Ελάχιστο απόθεμα</label><input type="number" id="editMinStock" min="0"></div>
+    <div class="modal-field"><label>Ημερομηνία λήξης</label><input type="text" id="editExpiry" placeholder="ΗΜ/ΜΗ/ΕΤΟΣ"></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="saveProductEdit()">Αποθήκευση</button><button class="btn" onclick="closeModal('editProductModal')">Άκυρο</button></div>
+  </div>
+</div>
+
+<div id="deletedModal" class="modal" onclick="closeModal('deletedModal', event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <h3><i class="fas fa-trash-alt"></i> Διεγραμμένα</h3>
+    <div id="deletedListContainer"></div>
+    <button class="btn" onclick="closeModal('deletedModal')" style="margin-top:12px; width:100%">Κλείσιμο</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- ΠΛΗΡΗΣ ΛΙΣΤΑ ΠΡΟΪΟΝΤΩΝ ----------
+    const fullNames1 = [
+      "Κουτί πίτσας","Ξυλάκι γκολφ 12εκ","Σκαφάκια craft","Bowl στρογγυλό","Καπάκια για bowl στρογγυλό","Bowl τετράγωνο","Καπάκια για bowl τετράγωνο","Λαδόκολλα καφέ 20χ30","Ρολό wypall κανάτα","Wrapmaster μεμβράνη 30cm x 300m","Wrapmaster μεμβράνη 45cm x 300m","Σακούλες για πάγο","Σακούλες κόκκινες","Σακούλες μπλε","Ρολό χάρτη 2χ4,5 kg","Τραπεζομάντηλα","Χαρτοπετσέτες","Ρολό βετεξ μπλε","Ρολό βετεξ κίτρινο","Σύρμα σπιράλ","Σφουγγάρια μεγάλα 14χ9","Σφουγγάρι 10χ7χ3","Μάπα *σφουγγαρίστρα μεγάλη","Solid hero 4,5kg","Kichen pro duo 2L καθαριστικό για κουζίνα","Clear dry hdp plus 5 L","Regain 5L","Χλωρίνη παχύρρευστη 5L","Assert fresh so 5L","Assert fresh so 20kg","Toprinse hd so στεγνωτικό πλυντήριο πιάτων 20kg","Topmatic crystal so απορρυπαντικό για πλυντήριο 25kg","Αεροζόλ για μηχανήματα","Imi orange γενική καθαριστικό κουζίνας","Kichen pro des special 2L απολυμαντικό επιφάνειας","Greaselift 2L","D-rinse plus στεγνωτικό πλυντήριο 5L","Drop extra απορρυπαντικό πλυντηρίου 5L","Γάντια μαύρα S","Γάντια μαύρα M","Γάντια μαύρα L","Γάντια μαύρα Xl","Γάντια με πούδρα Xl","Γάντια κόκκινα Μ","Γάντια κόκκινα L","Ποτήρι πλαστικό","Καπάκια για ποτήρι πλαστικό","Χάρτινο ποτήρι μεγάλο","Καπάκια για χάρτινο ποτήρι μεγάλο","Χάρτινο ποτήρι μεσαίο","Καπάκι για χάρτινο ποτήρι μεσαίο","Χάρτινο ποτήρι μικρό","Καπάκι για χάρτινο ποτήρι μικρό","Καλαμάκια χοντρά","Καλαμάκια για φραπέ","Καλαμάκια για φρέντο","Αναδευτήρες","Ξυλάκι φιόγκος 12cm","Μαχαιροπήρουνα","Κουταλάκια για παγωτό","Ταμπλέτες multi κουβάς","Σοκ κουβάς","Λαδόκολλα μεγάλη","Σκεύη για γιαούρτι"
+    ];
+
+    const fullNames2 = [
+      "Πατάτες fry'n dip", "Γύρο χοιρινό", "Γύρο κοτόπουλο", "Σουβλάκι κοτόπουλο χειρ.100g", "Σουβλάκι χοιρινό χειρ.100g", "Σουβλακι κοτο-μπεικον", "Πανσέτα νωπή μ/ο", "Σνίτσελ χοιρινό νωπό", "Σνίτσελ κοτόπουλο νωπό", "Σουτζουκάκια τύπου θασου 50g", "Παϊδάκια αρνίσια τεμάχια/να", "Μπριζόλα μοσχαρίσια Μ/Ο", "Μπριζόλα χοιρινή Tomahawk Μ/Ο", "Ψαρονέφρι", "Κιμάς ανάμεικτος", "Φιλέτο κοτόπουλο"
+    ];
+    const tab2Units = {
+      "Πανσέτα νωπή μ/ο": "kg", "Σνίτσελ χοιρινό νωπό": "kg", "Σνίτσελ κοτόπουλο νωπό": "kg",
+      "Μπριζόλα μοσχαρίσια Μ/Ο": "kg", "Μπριζόλα χοιρινή Tomahawk Μ/Ο": "kg", "Ψαρονέφρι": "kg",
+      "Κιμάς ανάμεικτος": "kg", "Φιλέτο κοτόπουλο": "kg"
+    };
+
+    const fullNames3 = [
+      "Καλαμάρι","Γαλέο","Ξιφία","Χταπόδι","Γαρίδες","Κανταΐφι","Κασεροκροκέτες","Πίτες","Πατάτες fry'n dip"
+    ];
+
+    const fullNames4 = [
+      "Ξύδι 390ml","Λεμόνι 370ml","Ξύδι 5L","Καστανή ζάχαρη 1kg","Λευκή ζάχαρη 1kg","Ζάχαρη καστανή στικ","Ζάχαρη λευκή στικ","Οδοντογλυφίδες","Στέβια στικ","Μέλι στικ","Μέλι μερίδα","Μερέντα μερίδα","Μαρμελάδα ροδάκινο μερίδα","Μαρμελάδα βερίκοκο","Μαρμελάδα φράουλα μερίδα","Μουστάρδα 4,2kg","Κέτσαπ 4,1kg","Κευσαπ στικ","Μαγιονέζα στικ","Μουστάρδα στικ","Πούλπα τομάτας 4100g","Τοματοπολτός 4500g","Κονκασέ 2500g","Πιπεριά κόκκινη ψητή 4100g","Κρεμμυδάκια Στιφάδο 2000g","Ντολμαδάκια 2000g","Φασολάκια γίγας 2000g","Κόκκινα φασόλια 2500g","Φασόλια μαγειρεμένα 2620g","Μανιτάρια τεμαχισμένα 2450g","Μανιτάρια ολόκληρα 2500g","Κομπόστα Φρουτοσαλάτα 2550g","Κομπόστα αχλάδια μισοκομμένα 1500g","Κομπόστα ροδέλες ανανά 3000g","Κομπόστα ροδάκινα σε φέτες 2600g","Μακαρόνια πέννες ριγέ","Μακαρόνια τριβελάκι χρώμα","Μακαρόνια τριβελάκι","Μακαρόνια φιογκάκια","Μακαρόνια κοφτό","Μακαρόνια παστίτσιο","Σπαγγέτι no6","Μακαρόνια Λαζανάκι","Κους κους","Κριθαράκι μέτριο","Knorr Σάλτσα Demi glace 1,2kg","Knorr Σούπα τομάτα κρέμα 1kg","Knorr ζωμός κότας σε πάστα 1,2 kg","Knorr ζωμός βοδινού σε πάστα 1,2kg","Knorr ζωμός λαχανικών σε σκόνη 1,25kg","Knorr ζωμός λαχανικών σε πάστα 1,5kg","Knorr σούπα μανιτάρι porcini κρέμα 850g","Knorr σάλτσα σόγιας 1L","Knorr σάλτσα μπάρμπεκιου 2,2L","Κρέμα βαλσαμικό 500ml","Γλυκό κουταλιού σύκο 3kg","Γλυκό κουταλιού βύσσινο 3kg","Γλυκό κουταλιού πορτοκάλι 3kg","Κορν φλάουρ 2,5kg","Αγουράκι τουρσί 680g","Κάπαρη 1000g","Τόνος σε νερό 160g","Καλαμπόκι σε άλμη 340g","Μανιτάρια κομμένα 400g","Αλεύρι γενικής χρήσης 1kg","Φαρίνα 500g","Ρύζι καρολίνα 5kg","Ρύζι μπονέτ 5kg","Ρύζι μπασμάτι 5kg","Φακή ψιλή 500g","Ρεβύθι χοντρό 500g","Τορτελίνι 1kg","Αλάτι ψιλό κουβά 12,5kg","Αλάτι χοντρό no2 5kg","Ρίγανη A’ 0,5kg","Πιπέρι κόκκινο γλυκό 1kg","Σκόρδο σκόνη 1kg","Μαύρο πιπέρι αλεσμένο 1kg","Γάλα 3,5%","Γάλα 1,5%","Γαλατάκια μερίδας 7,3ml","Εβαπορέ 410g","Γάλα αμυγδάλου 1L","Γάλα σόγιας 1L","Γάλα καρύδας 1L","Μείγμα για ζελέ γεύση ανανά 2kg","Μείγμα για κρεμ καραμελέ 2kg","Λάδια 10L","Πιπεράκια τουρσί 5kg","Ελιές Καλαμών 5kg","Ελιές θρούμπα 5kg","Ελιές πράσινες 5kg","Ελιές ροδέλα Καλαμών 5kg","Ελιές ροδέλα πράσινες 5kg","Κάρι","Σπυρί κόκκους πιπέρι","Υγρό για πάτωμα κεράσι","Ξύλο κανέλας","Κρουτόν"
+    ];
+
+    // Data structures
+    let tabData = {};
+    let deletedProducts = { tab1:[], tab2:[], tab3:[], tab4:[] };
+    let activeTab = 'tab1';
+    let sortableInstances = {};
+    let expiryWarningDays = 10;
+
+    const STORAGE_KEY = 'thassos_inventory_full_v1';
+
+    function createProduct(name, unit = 'pieces', qty = 0, minStock = 5, expiry = '') {
+      return { name, unit, quantity: qty, minStock, expiry };
+    }
+
+    function initDefaultProducts() {
+      tabData = {
+        tab1: { products: fullNames1.map(n => createProduct(n, 'pieces', 0, 5, '')) },
+        tab2: { products: fullNames2.map(n => createProduct(n, tab2Units[n] || 'pieces', 0, 5, '')) },
+        tab3: { products: fullNames3.map(n => createProduct(n, 'pieces', 0, 5, '')) },
+        tab4: { products: fullNames4.map(n => createProduct(n, 'pieces', 0, 5, '')) }
+      };
+    }
+
+    // Storage
+    function saveToStorage() {
+      const toStore = {
+        products: { tab1: tabData.tab1.products, tab2: tabData.tab2.products, tab3: tabData.tab3.products, tab4: tabData.tab4.products },
+        deleted: deletedProducts,
+        warningDays: expiryWarningDays
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+    }
+
+    function loadFromStorage() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      try {
+        const data = JSON.parse(raw);
+        if (data.products && data.deleted) {
+          tabData.tab1.products = data.products.tab1;
+          tabData.tab2.products = data.products.tab2;
+          tabData.tab3.products = data.products.tab3;
+          tabData.tab4.products = data.products.tab4;
+          deletedProducts = data.deleted;
+          expiryWarningDays = data.warningDays || 10;
+          document.getElementById('expiryWarningDays').value = expiryWarningDays;
+          return true;
+        }
+      } catch(e) {}
+      return false;
+    }
+
+    window.saveWarningDays = function() {
+      let val = parseInt(document.getElementById('expiryWarningDays').value);
+      if (isNaN(val) || val<0) val = 10;
+      expiryWarningDays = val;
+      saveToStorage();
+      renderTab(activeTab, document.getElementById('search').value);
+    };
+
+    function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
+
+    function parseDateInput(str) {
+      if (!str.trim()) return '';
+      let parts = str.trim().split(/[\/\-\.]/);
+      if (parts.length === 3) {
+        let day = parseInt(parts[0]), month = parseInt(parts[1]), year = parseInt(parts[2]);
+        if (year < 100) year += 2000;
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        }
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+      return '';
+    }
+
+    function formatDateForDisplay(ymd) {
+      if (!ymd) return '';
+      let [y,m,d] = ymd.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function isLowStock(prod) { return prod.quantity <= prod.minStock && prod.minStock > 0; }
+    function isExpiringSoon(expiry) {
+      if (!expiry) return false;
+      const exp = new Date(expiry);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const diff = (exp - today) / (1000*60*60*24);
+      return diff >= 0 && diff <= expiryWarningDays;
+    }
+
+    function destroySortable(tabId) {
+      if (sortableInstances[tabId]) { sortableInstances[tabId].destroy(); delete sortableInstances[tabId]; }
+    }
+
+    function renderTab(tabId, filterText = '') {
+      const products = tabData[tabId].products;
+      const container = document.getElementById(tabId==='tab1'?'productList1':tabId==='tab2'?'productList2':tabId==='tab3'?'productList3':'productList4');
+      const term = filterText.trim().toLowerCase();
+      let filtered = term ? products.filter(p => p.name.toLowerCase().includes(term)) : products;
+
+      destroySortable(tabId);
+      if (!filtered.length) {
+        container.innerHTML = `<div class="no-results"><i class="fas fa-box-open"></i> Δεν βρέθηκαν προϊόντα</div>`;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach((prod) => {
+        const originalIdx = products.findIndex(p => p.name === prod.name);
+        const unitOptions = { boxes:'Κιβώτιο', pieces:'Τεμάχια', kg:'Κιλά', pallet:'Παλέτα' };
+        const step = prod.unit === 'kg' ? '0.1' : '1';
+        const qtyValue = prod.quantity === 0 ? '' : prod.quantity;
+        const displayExpiry = formatDateForDisplay(prod.expiry);
+        const dragHandle = term ? '' : `<span class="drag-handle" title="Σύρε"><i class="fas fa-grip-lines"></i></span>`;
+
+        const lowQty = isLowStock(prod);
+        const soonExp = isExpiringSoon(prod.expiry);
+        const qtyInputClass = lowQty ? 'qty-input-red' : '';
+        const expiryInputClass = soonExp ? 'expiry-input-red' : '';
+
+        html += `
+          <div class="product-card" data-index="${originalIdx}">
+            <div class="drag-area">
+              ${dragHandle}
+              <div class="product-info">
+                <div class="product-name">${escapeHtml(prod.name)}</div>
+                <div class="product-meta">Ελάχ. απόθεμα: ${prod.minStock}</div>
+              </div>
+              <div class="product-actions">
+                <button class="icon-btn" onclick="openEditModal('${tabId}', ${originalIdx})"><i class="fas fa-pencil-alt"></i></button>
+                <button class="icon-btn delete-btn" onclick="deleteProduct('${tabId}', ${originalIdx})"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="stock-row">
+              <div class="qty-wrapper">
+                <div class="qty-control">
+                  <button onclick="changeQty('${tabId}', ${originalIdx}, -1)">–</button>
+                  <input type="number" min="0" step="${step}" value="${qtyValue}" class="${qtyInputClass}" onchange="updateQty('${tabId}', ${originalIdx}, this.value)">
+                  <button onclick="changeQty('${tabId}', ${originalIdx}, 1)">+</button>
+                </div>
+                <select class="unit-select" onchange="updateUnit('${tabId}', ${originalIdx}, this.value)">
+                  ${Object.entries(unitOptions).map(([val,label]) => `<option value="${val}" ${prod.unit===val?'selected':''}>${label}</option>`).join('')}
+                </select>
+              </div>
+              <div class="expiry-box">
+                <i class="far fa-calendar-alt"></i>
+                <input type="text" value="${displayExpiry}" placeholder="ΗΜ/ΜΗ/ΕΤΟΣ" class="${expiryInputClass}" onchange="updateExpiry('${tabId}', ${originalIdx}, this.value)">
+              </div>
+              <div class="minstock-box">
+                <span>Ελάχ.</span>
+                <input type="number" min="0" value="${prod.minStock}" onchange="updateMinStock('${tabId}', ${originalIdx}, this.value)">
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+
+      if (!term) {
+        sortableInstances[tabId] = new Sortable(container, {
+          handle: '.drag-handle',
+          animation: 150,
+          onEnd: function(evt) {
+            const items = Array.from(container.children);
+            const newOrder = items.map(el => parseInt(el.dataset.index, 10));
+            const oldProds = tabData[tabId].products;
+            const reordered = newOrder.map(idx => oldProds[idx]);
+            tabData[tabId].products = reordered;
+            saveToStorage();
+          }
+        });
+      }
+    }
+
+    window.changeQty = (tabId, idx, delta) => {
+      const prod = tabData[tabId].products[idx];
+      let newVal = Math.max(0, prod.quantity + delta);
+      if (prod.unit === 'kg') newVal = Math.round(newVal * 10) / 10;
+      prod.quantity = newVal;
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.updateQty = (tabId, idx, val) => {
+      const prod = tabData[tabId].products[idx];
+      let num = parseFloat(val); if (isNaN(num)||num<0) num=0;
+      prod.quantity = (prod.unit==='kg') ? Math.round(num*10)/10 : Math.floor(num);
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.updateUnit = (tabId, idx, newUnit) => {
+      tabData[tabId].products[idx].unit = newUnit;
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.updateExpiry = (tabId, idx, val) => {
+      const parsed = parseDateInput(val);
+      tabData[tabId].products[idx].expiry = parsed;
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.updateMinStock = (tabId, idx, val) => {
+      let num = parseInt(val); if (isNaN(num)||num<0) num=0;
+      tabData[tabId].products[idx].minStock = num;
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.deleteProduct = (tabId, idx) => {
+      const prod = tabData[tabId].products[idx];
+      if (!confirm(`Διαγραφή "${prod.name}";`)) return;
+      deletedProducts[tabId].push({...prod});
+      tabData[tabId].products.splice(idx,1);
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+
+    window.openEditModal = (tabId, idx) => {
+      const p = tabData[tabId].products[idx];
+      document.getElementById('editTabId').value = tabId;
+      document.getElementById('editIndex').value = idx;
+      document.getElementById('editName').value = p.name;
+      document.getElementById('editUnit').value = p.unit;
+      document.getElementById('editMinStock').value = p.minStock;
+      document.getElementById('editExpiry').value = formatDateForDisplay(p.expiry);
+      document.getElementById('editProductModal').style.display = 'flex';
+    };
+    window.saveProductEdit = () => {
+      const tabId = document.getElementById('editTabId').value;
+      const idx = parseInt(document.getElementById('editIndex').value);
+      const prod = tabData[tabId].products[idx];
+      prod.name = document.getElementById('editName').value.trim();
+      prod.unit = document.getElementById('editUnit').value;
+      prod.minStock = parseInt(document.getElementById('editMinStock').value) || 0;
+      prod.expiry = parseDateInput(document.getElementById('editExpiry').value);
+      saveToStorage(); closeModal('editProductModal'); renderTab(activeTab, document.getElementById('search').value);
+    };
+
+    window.clearAllQuantities = () => {
+      if (!confirm('Μηδενισμός όλων των ποσοτήτων;')) return;
+      for (let t in tabData) tabData[t].products.forEach(p => p.quantity = 0);
+      saveToStorage(); renderTab(activeTab, document.getElementById('search').value);
+    };
+
+    window.closeModal = (id, e) => { if (!e || e.target.classList.contains('modal')) document.getElementById(id).style.display='none'; };
+    window.openAddProductModal = () => document.getElementById('addProductModal').style.display='flex';
+    window.addNewProduct = () => {
+      const name = document.getElementById('newName').value.trim();
+      if (!name) { alert('Όνομα'); return; }
+      const unit = document.getElementById('newUnit').value;
+      const min = parseInt(document.getElementById('newMinStock').value) || 5;
+      const expiryRaw = document.getElementById('newExpiry').value;
+      const expiry = parseDateInput(expiryRaw);
+      const newProd = createProduct(name, unit, 0, min, expiry);
+      tabData[activeTab].products.push(newProd);
+      saveToStorage(); closeModal('addProductModal');
+      document.getElementById('newName').value = ''; renderTab(activeTab, document.getElementById('search').value);
+    };
+
+    window.showDeletedModal = () => {
+      const cont = document.getElementById('deletedListContainer');
+      let html = '';
+      const names = { tab1:'Iordanou', tab2:'Bikre', tab3:'Thasos food', tab4:'Ξενοδοχείο' };
+      for (let t in deletedProducts) {
+        const arr = deletedProducts[t];
+        if (!arr.length) continue;
+        html += `<h4>${names[t]}</h4>`;
+        arr.forEach((it,i) => {
+          html += `<div class="deleted-item"><span><b>${escapeHtml(it.name)}</b> (${it.unit})</span>
+            <div><button class="icon-btn" onclick="restoreDeleted('${t}',${i})"><i class="fas fa-undo"></i></button>
+            <button class="icon-btn delete-btn" onclick="permDelete('${t}',${i})"><i class="fas fa-times"></i></button></div></div>`;
+        });
+      }
+      cont.innerHTML = html || '<p>Κανένα διεγραμμένο</p>';
+      document.getElementById('deletedModal').style.display = 'flex';
+    };
+    window.restoreDeleted = (tabId, idx) => {
+      const item = deletedProducts[tabId][idx];
+      if (tabData[tabId].products.some(p => p.name === item.name)) { alert('Υπάρχει ήδη'); return; }
+      tabData[tabId].products.push({...item, quantity:0});
+      deletedProducts[tabId].splice(idx,1);
+      saveToStorage(); showDeletedModal(); renderTab(activeTab, document.getElementById('search').value);
+    };
+    window.permDelete = (tabId, idx) => {
+      if (confirm('Οριστική διαγραφή;')) { deletedProducts[tabId].splice(idx,1); saveToStorage(); showDeletedModal(); }
+    };
+
+    window.filterCurrentTab = () => renderTab(activeTab, document.getElementById('search').value);
+
+    window.exportPDF = () => {
+      let all = []; const catNames = { tab1:'Ιορδάνου', tab2:'Μπικρέ', tab3:'Θάσος food', tab4:'Ξενοδοχείο ξηρά' };
+      for (let t in tabData) tabData[t].products.forEach(p => all.push({cat: catNames[t], ...p}));
+      let html = `<html><head><meta charset="UTF-8"><title>Αποθήκη THASSOS</title><style>
+        body{font-family:system-ui;padding:20px} table{width:100%;border-collapse:collapse;} th{background:#1e2b3c;color:white;padding:6px}
+        td{border:1px solid #ccc;padding:5px} .red-bg{background:#fee2e2}</style></head><body>
+        <h1>THASSOS IMPERIAL</h1><p>Ημ/νία: ${new Date().toLocaleDateString('el')} | Ειδοποίηση λήξης: ${expiryWarningDays} ημέρες</p>`;
+      const groups = {}; all.forEach(i => { if(!groups[i.cat]) groups[i.cat]=[]; groups[i.cat].push(i); });
+      for (let cat in groups) {
+        html += `<h2>${cat}</h2><table><tr><th>Προϊόν</th><th>Ποσότητα</th><th>Μονάδα</th><th>Λήξη</th><th>Ελάχ.</th></tr>`;
+        groups[cat].forEach(p => {
+          const qty = p.quantity===0?'':(p.unit==='kg'? p.quantity.toFixed(1):p.quantity);
+          const exp = p.expiry ? formatDateForDisplay(p.expiry) : '';
+          const low = p.quantity <= p.minStock;
+          const soon = exp && isExpiringSoon(p.expiry);
+          html += `<tr><td>${escapeHtml(p.name)}</td><td class="${low?'red-bg':''}">${qty}</td><td>${p.unit}</td><td class="${soon?'red-bg':''}">${exp}</td><td>${p.minStock}</td></tr>`;
+        });
+        html += '</table>';
+      }
+      html += '</body></html>';
+      const w = window.open(); w.document.write(html); w.document.close(); w.print();
+    };
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.category-pane').forEach(p => p.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+      activeTab = tabId;
+      document.getElementById('search').value = '';
+      renderTab(tabId);
+    }
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => switchTab(t.dataset.tab)));
+
+    // init
+    initDefaultProducts();
+    if (!loadFromStorage()) saveToStorage();
+    else document.getElementById('expiryWarningDays').value = expiryWarningDays;
+    renderTab('tab1');
+  })();
+</script>
+</body>
+</html>

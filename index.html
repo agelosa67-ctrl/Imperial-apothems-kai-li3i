@@ -22,34 +22,40 @@
     .search-section{background:white;padding:8px 12px 10px;box-shadow:0 2px 5px rgba(0,0,0,.05);position:sticky;top:96px;z-index:18;}
     #search{width:100%;padding:10px 14px;font-size:14px;border:1.5px solid #d0ddeb;border-radius:30px;outline:none;background:#fafcff;}
     #search:focus{border-color:#1e3a5f;background:white;}
-    .action-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-    .action-bar button{flex:1 0 calc(20% - 6px);padding:8px 0;background:#2563eb;color:white;border:none;border-radius:30px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;touch-action:manipulation;}
+    .action-bar{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+    .action-bar button{flex:1 0 calc(20% - 5px);padding:8px 0;background:#2563eb;color:white;border:none;border-radius:30px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;touch-action:manipulation;}
+    .btn-save{background:#15803d!important;}
     .btn-pdf{background:#0b3b5c!important;}
     .btn-clear{background:#b91c1c!important;}
-    .btn-del{background:#6b4f3c!important;}
+    .btn-del2{background:#6b4f3c!important;}
     .btn-filter{background:#059669!important;}
     .btn-filter.active{background:#065f46!important;box-shadow:0 0 0 2px #6ee7b7;}
-    .btn-ai{background:#7c3aed!important;}
+    /* Save toast */
+    .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:#15803d;color:white;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:500;pointer-events:none;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
     .stats-bar{display:flex;gap:6px;padding:6px 10px 2px;overflow-x:auto;}
     .stat-chip{background:white;border:1px solid #d1e3f3;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:#1e3a5f;white-space:nowrap;flex-shrink:0;}
     .stat-chip span{color:#2563eb;}
     .tab-content{padding:8px 10px 80px;}
     .tab-pane{display:none;}
     .tab-pane.active{display:block;}
-    .product{background:white;margin:8px 0;padding:10px;border-radius:18px;box-shadow:0 2px 6px rgba(0,0,0,.03);border:1px solid #e2edf7;transition:background .2s,border-color .2s;}
+    /* Products */
+    .product{background:white;margin:8px 0;padding:10px;border-radius:18px;box-shadow:0 2px 6px rgba(0,0,0,.03);border:1px solid #e2edf7;transition:background .2s;}
     .product.has-qty{border-left:4px solid #22c55e;}
     .product.dup-warn{border-left:5px solid #e53e3e;}
     .product.dup-alert{background:#fff5f5;border-color:#fc8181;border-left:5px solid #c53030;}
     .product-header{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-    .product-thumb{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;border:1.5px solid #e2edf7;cursor:pointer;}
-    .product-thumb-ph{width:54px;height:54px;border-radius:12px;flex-shrink:0;border:1.5px dashed #c5d8ea;background:#f0f5fa;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;color:#7e9ab5;font-size:10px;font-weight:600;text-align:center;}
-    .product-thumb-ph .ico{font-size:20px;}
-    .product-thumb-ph.loading{background:#e0edf8;border-color:#7c3aed;animation:pulse 1s infinite;}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .thumb-wrap{position:relative;width:56px;height:56px;flex-shrink:0;}
+    .product-thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;border:1.5px solid #e2edf7;cursor:pointer;display:block;}
+    .thumb-del{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;background:#e53e3e;color:white;border:2px solid white;font-size:10px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+    .product-thumb-ph{width:56px;height:56px;border-radius:12px;flex-shrink:0;border:2px dashed #c5d8ea;background:#f0f5fa;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;color:#7e9ab5;font-size:10px;font-weight:600;text-align:center;transition:background .15s;}
+    .product-thumb-ph:active{background:#dbeafe;}
+    .ph-ico{font-size:22px;line-height:1;}
+    .file-inp{display:none;}
     .product-name{font-weight:700;font-size:14px;color:#0f2a44;flex:1;word-break:break-word;line-height:1.2;}
     .dup-icon{font-size:15px;margin-left:3px;color:#e53e3e;}
     .product-actions{display:flex;gap:2px;flex-shrink:0;}
-    .btn-edit,.btn-del2{background:none;border:none;font-size:16px;cursor:pointer;padding:6px;color:#7e9ab5;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+    .btn-edit,.btn-trash{background:none;border:none;font-size:16px;cursor:pointer;padding:6px;color:#7e9ab5;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
     .product-controls{display:flex;gap:10px;justify-content:space-around;}
     .qty-item{flex:1;display:flex;flex-direction:column;align-items:center;}
     .qty-label{display:flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#1e3a5f;margin-bottom:3px;text-transform:uppercase;cursor:pointer;}
@@ -66,28 +72,24 @@
     #scrollBtn.vis{opacity:1;transform:scale(1);pointer-events:auto;}
     .no-results{text-align:center;padding:25px;color:#5f7d9c;font-style:italic;background:white;border-radius:20px;margin-top:16px;}
     .footer-note{text-align:center;font-size:11px;color:#6f8fae;padding:12px;}
-    .ai-prog{background:#f3f0ff;border:1px solid #c4b5fd;border-radius:14px;padding:10px 14px;margin:6px 10px;font-size:12px;color:#5b21b6;font-weight:600;display:none;}
-    .pb-wrap{background:#ddd6fe;border-radius:30px;height:6px;margin-top:6px;}
-    .pb{background:#7c3aed;height:6px;border-radius:30px;transition:width .4s;}
-    /* Overlay */
-    .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+    /* Overlays & Modals */
+    .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
     .overlay.open{display:flex;}
-    .overlay img{max-width:88%;max-height:65vh;border-radius:16px;object-fit:contain;}
+    .overlay img{max-width:90%;max-height:70vh;border-radius:16px;object-fit:contain;}
     .ov-name{color:white;font-size:16px;font-weight:700;text-align:center;padding:0 20px;}
     .ov-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
     .ov-btns button{padding:10px 20px;border:none;border-radius:30px;font-weight:700;font-size:14px;cursor:pointer;}
-    .ov-refresh{background:#7c3aed;color:white;}
+    .ov-change{background:#2563eb;color:white;}
     .ov-remove{background:#b91c1c;color:white;}
     .ov-close{background:#e2edf7;color:#1e3a5f;}
-    /* Modals */
     .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000;}
     .modal.open{display:flex;}
     .modal-box{background:white;border-radius:20px;padding:20px 16px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 35px rgba(0,0,0,.2);}
     .modal-box h3{margin:0 0 16px;color:#1e3a5f;text-align:center;font-weight:700;font-size:18px;}
     .modal-box input{padding:12px 14px;margin:6px 0;background:#f4f9ff;border:1px solid #cbdbe9;border-radius:30px;font-size:15px;width:100%;outline:none;}
-    .modal-box .btn-primary{margin-top:12px;padding:12px;width:100%;background:#1e3a5f;color:white;border:none;border-radius:30px;font-weight:bold;font-size:15px;cursor:pointer;touch-action:manipulation;display:block;}
+    .btn-primary{margin-top:12px;padding:12px;width:100%;background:#1e3a5f;color:white;border:none;border-radius:30px;font-weight:bold;font-size:15px;cursor:pointer;touch-action:manipulation;display:block;}
     .unit-opt{padding:12px;margin:4px 0;background:#f0f5fa;border-radius:30px;text-align:center;font-weight:600;cursor:pointer;}
-    .unit-opt:hover{background:#1e3a5f;color:white;}
+    .unit-opt:hover,.unit-opt:active{background:#1e3a5f;color:white;}
     .del-item{background:#fef9ec;margin:6px 0;padding:8px;border-radius:16px;display:flex;justify-content:space-between;align-items:center;gap:4px;font-size:13px;}
     .btn-restore{border:none;border-radius:20px;background:#15803d;color:white;cursor:pointer;font-weight:bold;padding:5px 8px;font-size:13px;}
     .btn-perm{border:none;border-radius:20px;background:#b91c1c;color:white;cursor:pointer;font-weight:bold;padding:5px 8px;font-size:13px;margin-left:4px;}
@@ -99,6 +101,7 @@
 </head>
 <body>
 
+<div class="toast" id="toast"></div>
 <button id="scrollBtn">⬆️</button>
 <header><h1>THASSOS IMPERIAL</h1></header>
 
@@ -110,19 +113,16 @@
 <div class="search-section">
   <input type="text" id="search" placeholder="🔍 Αναζήτηση..." oninput="filterTab()">
   <div class="action-bar">
-    <button class="btn-pdf"   onclick="exportPDF()">📄 PDF</button>
-    <button                   onclick="openAddModal()">➕ Νέο</button>
-    <button class="btn-clear" id="clearBtn" onclick="clearCatQty()">🧹 Μηδέν</button>
-    <button class="btn-filter"id="filterBtn" onclick="toggleFilter()">📦 Με ποσ.</button>
-    <button class="btn-ai"    onclick="aiBatchImages()">🤖 AI Εικόνες</button>
-    <button class="btn-del"   onclick="showDeletedModal()">🗑️ Διεγρ.</button>
+    <button class="btn-save"   onclick="saveToFile()">💾 Αρχείο</button>
+    <button class="btn-pdf"    onclick="exportPDF()">📄 PDF</button>
+    <button                    onclick="openAddModal()">➕ Νέο</button>
+    <button class="btn-clear"  id="clearBtn" onclick="clearCatQty()">🧹 Μηδέν</button>
+    <button class="btn-filter" id="filterBtn" onclick="toggleFilter()">📦 Με ποσ.</button>
+    <button class="btn-del2"   onclick="showDeletedModal()">🗑️ Διεγρ.</button>
   </div>
 </div>
 
-<div class="ai-prog" id="aiProg">
-  <div id="aiTxt">Αναζήτηση…</div>
-  <div class="pb-wrap"><div class="pb" id="aiBar" style="width:0%"></div></div>
-</div>
+<input type="file" id="fileInp" class="file-inp" accept="image/*">
 
 <div class="stats-bar" id="statsBar"></div>
 <div class="tab-content" id="tabContent"></div>
@@ -133,14 +133,14 @@
   <div class="ov-name" id="ovName"></div>
   <img id="ovImg" src="" alt="">
   <div class="ov-btns" onclick="event.stopPropagation()">
-    <button class="ov-refresh" onclick="ovRefresh()">🔄 Νέα εικόνα</button>
-    <button class="ov-remove"  onclick="ovRemove()">🗑️ Αφαίρεση</button>
-    <button class="ov-close"   onclick="closeImgOv()">✕ Κλείσιμο</button>
+    <button class="ov-change" onclick="ovChangePhoto()">📷 Αλλαγή</button>
+    <button class="ov-remove" onclick="ovRemove()">🗑️ Αφαίρεση</button>
+    <button class="ov-close"  onclick="closeImgOv()">✕ Κλείσιμο</button>
   </div>
 </div>
 
-<!-- Unit modal -->
-<div id="unitModal" class="modal" onclick="closeModal('unitModal',event)">
+<!-- Modals -->
+<div id="unitModal" class="modal" onclick="closeMod('unitModal',event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Επιλογή μονάδας</h3>
     <div class="unit-opt" data-unit="pieces">📦 Τεμάχια</div>
@@ -148,37 +148,29 @@
     <div class="unit-opt" data-unit="pallet">🏗️ Παλέτα</div>
   </div>
 </div>
-
-<!-- Add product modal -->
-<div id="addModal" class="modal" onclick="closeModal('addModal',event)">
+<div id="addModal" class="modal" onclick="closeMod('addModal',event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>➕ Νέο προϊόν</h3>
-    <input type="text" id="newName" placeholder="Όνομα προϊόντος" autocomplete="off" oninput="checkDupName()">
+    <input type="text" id="newName" placeholder="Όνομα προϊόντος" autocomplete="off" oninput="checkDup()">
     <div id="dupWarn" style="color:red;font-size:12px;margin-top:4px;min-height:16px;"></div>
     <button class="btn-primary" onclick="addProduct()">Προσθήκη</button>
   </div>
 </div>
-
-<!-- Edit product modal -->
-<div id="editModal" class="modal" onclick="closeModal('editModal',event)">
+<div id="editModal" class="modal" onclick="closeMod('editModal',event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>✏️ Επεξεργασία</h3>
     <input type="text" id="editName" placeholder="Νέο όνομα">
     <button class="btn-primary" onclick="saveEdit()">Αποθήκευση</button>
   </div>
 </div>
-
-<!-- Deleted modal -->
-<div id="deletedModal" class="modal" onclick="closeModal('deletedModal',event)">
+<div id="deletedModal" class="modal" onclick="closeMod('deletedModal',event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>🗑️ Διεγραμμένα</h3>
     <div id="delList"></div>
-    <button class="btn-primary" onclick="closeModal('deletedModal')">Κλείσιμο</button>
+    <button class="btn-primary" onclick="closeMod('deletedModal')">Κλείσιμο</button>
   </div>
 </div>
-
-<!-- Category manager modal -->
-<div id="catModal" class="modal" onclick="closeModal('catModal',event)">
+<div id="catModal" class="modal" onclick="closeMod('catModal',event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>📂 Κατηγορίες</h3>
     <div id="catList"></div>
@@ -186,85 +178,204 @@
       <input type="text" id="newCatName" placeholder="Νέα κατηγορία" style="flex:2;">
       <button class="btn-primary" style="flex:1;margin-top:0;" onclick="addCategory()">➕</button>
     </div>
-    <button class="btn-primary" onclick="closeModal('catModal')" style="margin-top:12px;">Κλείσιμο</button>
+    <button class="btn-primary" onclick="closeMod('catModal')" style="margin-top:12px;">Κλείσιμο</button>
   </div>
 </div>
 
 <script>
 "use strict";
-// ── Helpers ──
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]);}
+
+// ════════════════════════════════════════════
+// EMBEDDED DATA — ενημερώνεται αυτόματα με "💾 Αρχείο"
+var EMBEDDED_DATA = null;
+// ════════════════════════════════════════════
+
+function esc(s){return String(s).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];});}
 function q(id){return document.getElementById(id);}
-function openModal(id){q(id).classList.add('open');}
-function closeModal(id,e){if(!e||e.target.id===id)q(id).classList.remove('open');}
+function openMod(id){q(id).classList.add('open');}
+function closeMod(id,e){if(!e||e.target.id===id)q(id).classList.remove('open');}
+function showToast(msg){var t=q('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
-// ── State ──
-var cats=[], activeId=null, pendUnit=null, pendEdit=null, filterQty=false, ovCtx=null;
-var SK='thassos_v5';
+var cats=[], activeId=null, pendUnit=null, pendEdit=null, filterQty=false, ovCtx=null, pendPhoto=null;
+var SK='thassos_v7';
 
-// ── Default data ──
+/* ── Default data ── */
 var DEF=[
-  {name:'Ιορδάνου',ps:["Κουτί πίτσας","Ξυλάκι γκολφ 12εκ","Σκαφάκια craft","Bowl στρογγυλό","Καπάκια bowl στρογγυλό","Bowl τετράγωνο","Καπάκια bowl τετράγωνο","Λαδόκολλα καφέ 20χ30","Ρολό wypall κανάτα","Wrapmaster μεμβράνη 30cm","Wrapmaster μεμβράνη 45cm","Σακούλες για πάγο","Σακούλες κόκκινες","Σακούλες μπλε","Ρολό χάρτη 2χ4,5kg","Τραπεζομάντηλα","Χαρτοπετσέτες","Ρολό βετεξ μπλε","Ρολό βετεξ κίτρινο","Σύρμα σπιράλ","Σφουγγάρια μεγάλα 14χ9","Σφουγγάρι 10χ7χ3","Μάπα σφουγγαρίστρα","Solid hero 4,5kg","Kichen pro duo 2L","Clear dry hdp plus 5L","Regain 5L","Χλωρίνη παχύρρευστη 5L","Assert fresh so 5L","Assert fresh so 20kg","Toprinse hd so 20kg","Topmatic crystal so 25kg","Αεροζόλ μηχανημάτων","Imi orange γενική","Kichen pro des special 2L","Greaselift 2L","D-rinse plus 5L","Drop extra 5L","Γάντια μαύρα S","Γάντια μαύρα M","Γάντια μαύρα L","Γάντια μαύρα Xl","Γάντια με πούδρα Xl","Γάντια κόκκινα Μ","Γάντια κόκκινα L","Ποτήρι πλαστικό","Καπάκια ποτηριού","Χάρτινο ποτήρι μεγάλο","Καπάκια χάρτινου μεγάλου","Χάρτινο ποτήρι μεσαίο","Καπάκι χάρτινου μεσαίου","Χάρτινο ποτήρι μικρό","Καπάκι χάρτινου μικρού","Καλαμάκια χοντρά","Καλαμάκια φραπέ","Καλαμάκια φρέντο","Αναδευτήρες","Ξυλάκι φιόγκος 12cm","Μαχαιροπήρουνα","Κουταλάκια παγωτού","Ταμπλέτες multi κουβάς","Σοκ κουβάς","Λαδόκολλα μεγάλη","Σκεύη γιαουρτιού","Σκουπα","Κοντάρι μικρό","Σφουγγαρίστρα","Κουβάς σφουγγαρίστρας","Φαράσι","Κοντάρι φαρασιού"].map(function(n){return{name:n,boxes:0,sv:0,su:'pieces',img:''}})},
-  {name:'Bikre ταβέρνα',ps:[
-    {name:"Πατάτες fry'n dip",su:'pieces'},{name:"Γύρο χοιρινό",su:'pieces'},{name:"Γύρο κοτόπουλο",su:'pieces'},
-    {name:"Σουβλάκι κοτόπουλο 100g",su:'pieces'},{name:"Σουβλάκι χοιρινό 100g",su:'pieces'},{name:"Σουβλάκι κοτό-μπέικον",su:'pieces'},
-    {name:"Πανσέτα νωπή",su:'kg'},{name:"Σνίτσελ χοιρινό",su:'kg'},{name:"Σνίτσελ κοτόπουλο",su:'kg'},
-    {name:"Σουτζουκάκια 50g",su:'pieces'},{name:"Παϊδάκια αρνίσια",su:'pieces'},{name:"Μπριζόλα μοσχαρίσια",su:'kg'},
-    {name:"Μπριζόλα χοιρινή Tomahawk",su:'kg'},{name:"Ψαρονέφρι",su:'kg'},{name:"Κιμάς ανάμεικτος",su:'kg'},{name:"Φιλέτο κοτόπουλο",su:'kg'}
-  ].map(function(p){return{name:p.name,boxes:0,sv:0,su:p.su,img:''};})},
-  {name:'Thasos food taverna',ps:["Καλαμάρι","Γαλέος","Ξιφίας","Χταπόδι","Γαρίδες","Κανταΐφι","Κασεροκροκέτες","Πίτες","Πατάτες fry'n dip"].map(function(n){return{name:n,boxes:0,sv:0,su:'pieces',img:''};})},
-  {name:'Thasosfood ξηρά',ps:["Ξύδι 390ml","Λεμόνι 370ml","Ξύδι 5L","Καστανή ζάχαρη 1kg","Λευκή ζάχαρη 1kg","Ζάχαρη καστανή στικ","Ζάχαρη λευκή στικ","Οδοντογλυφίδες","Στέβια στικ","Μέλι στικ","Μέλι κουβά 5kg","Μερέντα μερίδα","Μαρμελάδα ροδάκινο","Μαρμελάδα βερίκοκο","Μαρμελάδα φράουλα","Μουστάρδα 4,2kg","Κέτσαπ 4,1kg","Κετσαπ στικ","Μαγιονέζα στικ","Μουστάρδα στικ","Πούλπα τομάτας 4100g","Τοματοπολτός 4500g","Κονκασέ 2500g","Πιπεριά κόκκινη ψητή","Κρεμμυδάκια Στιφάδο","Ντολμαδάκια 2000g","Φασολάκια γίγας","Κόκκινα φασόλια 2500g","Φασόλια μαγειρεμένα","Μανιτάρια τεμαχισμένα","Μανιτάρια ολόκληρα","Κομπόστα Φρουτοσαλάτα","Κομπόστα αχλάδια","Κομπόστα ανανά","Κομπόστα ροδάκινα","Μακαρόνια πέννες","Μακαρόνια τριβελάκι","Μακαρόνια φιογκάκια","Μακαρόνια κοφτό","Μακαρόνια παστίτσιο","Σπαγγέτι no6","Μακαρόνια Λαζανάκι","Κους κους","Κριθαράκι μέτριο","Knorr Demi glace","Knorr Σούπα τομάτα","Knorr ζωμός κότας","Knorr ζωμός βοδινού","Knorr ζωμός λαχανικών σκόνη","Knorr ζωμός λαχανικών πάστα","Knorr σούπα μανιτάρι","Knorr σάλτσα σόγιας","Knorr σάλτσα μπάρμπεκιου","Knorr σάλτσα τομάτας 10kg","Dee thai Chilli sauce","Κρέμα βαλσαμικό","Γλυκό σύκο 3kg","Γλυκό βύσσινο 3kg","Γλυκό πορτοκάλι 3kg","Κορν φλάουρ 2,5kg","Κριθαροκουλουρα 1kg","Αγουράκι τουρσί","Κάπαρη 1000g","Τόνος σε νερό","Καλαμπόκι σε άλμη","Αλεύρι γενικής χρήσης","Ρύζι καρολίνα 5kg","Ρύζι μπονέτ 5kg","Ρύζι μπασμάτι 5kg","Φακή ψιλή","Ρεβύθι χοντρό","Τορτελίνι 1kg","Αλάτι ψιλό 12,5kg","Αλάτι χοντρό no2 5kg","Ρίγανη A'","Πιπέρι κόκκινο γλυκό","Σκόρδο σκόνη","Μαύρο πιπέρι αλεσμένο","Γάλα 3,5%","Γάλα 1,5%","Γαλατάκια μερίδας","Εβαπορέ 410g","Γάλα αμυγδάλου","Γάλα σόγιας","Γάλα καρύδας","Μείγμα ζελέ ανανά","Μείγμα κρεμ καραμελέ","Βανίλια σκόνη","Γαρίφαλο σπυρί","Καπνιστό αλάτι","Μπαχάρι σπυρί","Ξύλο κανέλας","Μοσχοκάρυδο τριμμένο","Καπνιστή πάπρικα","Μπουκοβο καυτερό","Κρουτόν","Δάφνη","Κάρι","Κουρκουμάς","Θυμάρι","Βασιλικό","Δεντρολίβανο","Λάδια 10L","Πιπεράκι τουρσί 5kg","Ελιές Καλαμών 5kg","Ελιές θρούμπα 5kg","Ελιές πράσινες 5kg","Ελιές ροδέλα Καλαμών","Ελιές ροδέλα πράσινες"].map(function(n){return{name:n,boxes:0,sv:0,su:'pieces',img:''};})},
-  {name:'Καφέδες',ps:["Nestle Cocoa 1kg","Nestle Dairy whitener 1kg","Nescafé Intense 500gr","Nescafé Classic Sticks","Nescafé Intenso 1kg","Nescafé Classic 550g","Λουμίδης Ελληνικός 981g","Cafiza2","Nescafé Classic Decaf 200g","Nestle ρόφημα σοκολάτας 1kg","Plantage Filter Coffee 488g","Buondi Decaffe φακελάκια"].map(function(n){return{name:n,boxes:0,sv:0,su:'pieces',img:''};})},
-  {name:'BOSKOS',ps:["Ελιές Καλαμών 5kg","Ελιές πράσινες 5kg","Ελιές ροδέλα Καλαμών","Ελιές ροδέλα πράσινες","Πιπεράκι τουρσί 5kg","Καπνιστή πάπρικα 1kg","Αλάτι χοντρό 10kg","Μοσχοκάρυδο τριμμένο","Γαρίφαλο σπυρί 1kg","Μπουκοβο καυτερό 1kg","Κόλιανδρο σκόνη 1kg","Κόλιανδρο σπυρί 1kg"].map(function(n){return{name:n,boxes:0,sv:0,su:'pieces',img:''};})},
+  {name:'Ιορδάνου',ps:["Κουτί πίτσας","Ξυλάκι γκολφ 12εκ","Σκαφάκια craft","Bowl στρογγυλό","Καπάκια bowl στρογγυλό","Bowl τετράγωνο","Καπάκια bowl τετράγωνο","Λαδόκολλα καφέ 20χ30","Ρολό wypall κανάτα","Wrapmaster μεμβράνη 30cm","Wrapmaster μεμβράνη 45cm","Σακούλες για πάγο","Σακούλες κόκκινες","Σακούλες μπλε","Ρολό χάρτη 2χ4,5kg","Τραπεζομάντηλα","Χαρτοπετσέτες","Ρολό βετεξ μπλε","Ρολό βετεξ κίτρινο","Σύρμα σπιράλ","Σφουγγάρια μεγάλα 14χ9","Σφουγγάρι 10χ7χ3","Μάπα σφουγγαρίστρα","Solid hero 4,5kg","Kichen pro duo 2L","Clear dry hdp plus 5L","Regain 5L","Χλωρίνη παχύρρευστη 5L","Assert fresh so 5L","Assert fresh so 20kg","Toprinse hd so 20kg","Topmatic crystal so 25kg","Αεροζόλ μηχανημάτων","Imi orange γενική","Kichen pro des special 2L","Greaselift 2L","D-rinse plus 5L","Drop extra 5L","Γάντια μαύρα S","Γάντια μαύρα M","Γάντια μαύρα L","Γάντια μαύρα Xl","Γάντια με πούδρα Xl","Γάντια κόκκινα Μ","Γάντια κόκκινα L","Ποτήρι πλαστικό","Καπάκια ποτηριού","Χάρτινο ποτήρι μεγάλο","Καπάκια χάρτινου μεγάλου","Χάρτινο ποτήρι μεσαίο","Καπάκι χάρτινου μεσαίου","Χάρτινο ποτήρι μικρό","Καπάκι χάρτινου μικρού","Καλαμάκια χοντρά","Καλαμάκια φραπέ","Καλαμάκια φρέντο","Αναδευτήρες","Ξυλάκι φιόγκος 12cm","Μαχαιροπήρουνα","Κουταλάκια παγωτού","Ταμπλέτες multi κουβάς","Σοκ κουβάς","Λαδόκολλα μεγάλη","Σκεύη γιαουρτιού","Σκουπα","Κοντάρι μικρό","Σφουγγαρίστρα","Κουβάς σφουγγαρίστρας","Φαράσι","Κοντάρι φαρασιού"]},
+  {name:'Bikre ταβέρνα',ps:["Πατάτες fry'n dip","Γύρο χοιρινό","Γύρο κοτόπουλο","Σουβλάκι κοτόπουλο 100g","Σουβλάκι χοιρινό 100g","Σουβλάκι κοτό-μπέικον","Πανσέτα νωπή","Σνίτσελ χοιρινό","Σνίτσελ κοτόπουλο","Σουτζουκάκια 50g","Παϊδάκια αρνίσια","Μπριζόλα μοσχαρίσια","Μπριζόλα χοιρινή Tomahawk","Ψαρονέφρι","Κιμάς ανάμεικτος","Φιλέτο κοτόπουλο"]},
+  {name:'Thasos food taverna',ps:["Καλαμάρι","Γαλέος","Ξιφίας","Χταπόδι","Γαρίδες","Κανταΐφι","Κασεροκροκέτες","Πίτες","Πατάτες fry'n dip"]},
+  {name:'Thasosfood ξηρά',ps:["Ξύδι 390ml","Λεμόνι 370ml","Ξύδι 5L","Καστανή ζάχαρη 1kg","Λευκή ζάχαρη 1kg","Ζάχαρη καστανή στικ","Ζάχαρη λευκή στικ","Οδοντογλυφίδες","Στέβια στικ","Μέλι στικ","Μέλι κουβά 5kg","Μερέντα μερίδα","Μαρμελάδα ροδάκινο","Μαρμελάδα βερίκοκο","Μαρμελάδα φράουλα","Μουστάρδα 4,2kg","Κέτσαπ 4,1kg","Κετσαπ στικ","Μαγιονέζα στικ","Μουστάρδα στικ","Πούλπα τομάτας 4100g","Τοματοπολτός 4500g","Κονκασέ 2500g","Πιπεριά κόκκινη ψητή","Κρεμμυδάκια Στιφάδο","Ντολμαδάκια 2000g","Φασολάκια γίγας","Κόκκινα φασόλια 2500g","Φασόλια μαγειρεμένα","Μανιτάρια τεμαχισμένα","Μανιτάρια ολόκληρα","Κομπόστα Φρουτοσαλάτα","Κομπόστα αχλάδια","Κομπόστα ανανά","Κομπόστα ροδάκινα","Μακαρόνια πέννες","Μακαρόνια τριβελάκι","Μακαρόνια φιογκάκια","Μακαρόνια κοφτό","Μακαρόνια παστίτσιο","Σπαγγέτι no6","Μακαρόνια Λαζανάκι","Κους κους","Κριθαράκι μέτριο","Knorr Demi glace","Knorr Σούπα τομάτα","Knorr ζωμός κότας","Knorr ζωμός βοδινού","Knorr ζωμός λαχανικών σκόνη","Knorr ζωμός λαχανικών πάστα","Knorr σούπα μανιτάρι","Knorr σάλτσα σόγιας","Knorr σάλτσα μπάρμπεκιου","Knorr σάλτσα τομάτας 10kg","Dee thai Chilli sauce","Κρέμα βαλσαμικό","Γλυκό σύκο 3kg","Γλυκό βύσσινο 3kg","Γλυκό πορτοκάλι 3kg","Κορν φλάουρ 2,5kg","Κριθαροκουλουρα 1kg","Αγουράκι τουρσί","Κάπαρη 1000g","Τόνος σε νερό","Καλαμπόκι σε άλμη","Αλεύρι γενικής χρήσης","Ρύζι καρολίνα 5kg","Ρύζι μπονέτ 5kg","Ρύζι μπασμάτι 5kg","Φακή ψιλή","Ρεβύθι χοντρό","Τορτελίνι 1kg","Αλάτι ψιλό 12,5kg","Αλάτι χοντρό no2 5kg","Ρίγανη A'","Πιπέρι κόκκινο γλυκό","Σκόρδο σκόνη","Μαύρο πιπέρι αλεσμένο","Γάλα 3,5%","Γάλα 1,5%","Γαλατάκια μερίδας","Εβαπορέ 410g","Γάλα αμυγδάλου","Γάλα σόγιας","Γάλα καρύδας","Μείγμα ζελέ ανανά","Μείγμα κρεμ καραμελέ","Βανίλια σκόνη","Γαρίφαλο σπυρί","Καπνιστό αλάτι","Μπαχάρι σπυρί","Ξύλο κανέλας","Μοσχοκάρυδο τριμμένο","Καπνιστή πάπρικα","Μπουκοβο καυτερό","Κρουτόν","Δάφνη","Κάρι","Κουρκουμάς","Θυμάρι","Βασιλικό","Δεντρολίβανο","Λάδια 10L","Πιπεράκι τουρσί 5kg","Ελιές Καλαμών 5kg","Ελιές θρούμπα 5kg","Ελιές πράσινες 5kg","Ελιές ροδέλα Καλαμών","Ελιές ροδέλα πράσινες"]},
+  {name:'Καφέδες',ps:["Nestle cocoa 1kg","Nestle Dairy whitener 1kg","Nescafé Intense 500gr","Nescafé Classic Sticks","Nescafé Intenso 1kg","Nescafé Classic 550g","Λουμίδης Ελληνικός 981g","Cafiza2","Nescafé Classic Decaf 200g","Nestle ρόφημα σοκολάτας 1kg","Plantage Filter Coffee 488g","Buondi Decaffe φακελάκια"]},
+  {name:'BOSKOS',ps:["Ελιές Καλαμών 5kg","Ελιές πράσινες 5kg","Ελιές ροδέλα Καλαμών","Ελιές ροδέλα πράσινες","Πιπεράκι τουρσί 5kg","Καπνιστή πάπρικα 1kg","Αλάτι χοντρό 10kg","Μοσχοκάρυδο τριμμένο","Γαρίφαλο σπυρί 1kg","Μπουκοβο καυτερό 1kg","Κόλιανδρο σκόνη 1kg","Κόλιανδρο σπυρί 1kg"]}
 ];
+
+function mkP(name){return{name:name,boxes:0,sv:0,su:'pieces',img:''};}
 
 function initCats(){
   cats=DEF.map(function(d,i){
-    return{id:'c'+Date.now()+'_'+i,name:d.name,products:d.ps.map(function(p){return{name:p.name,boxes:p.boxes||0,sv:p.sv||0,su:p.su||'pieces',img:p.img||''};}),deleted:[]};
+    return{id:'c'+Date.now()+'_'+i,name:d.name,products:d.ps.map(mkP),deleted:[]};
   });
 }
-function save(){try{localStorage.setItem(SK,JSON.stringify(cats));}catch(e){}}
+
+/* ── Storage: localStorage + EMBEDDED_DATA ── */
+function save(){
+  try{localStorage.setItem(SK,JSON.stringify(cats));}
+  catch(e){/* full */}
+}
 function load(){
+  // 1. Try localStorage first (most recent)
   try{
     var raw=localStorage.getItem(SK);
-    if(!raw){initCats();return;}
-    var d=JSON.parse(raw);
-    if(Array.isArray(d)&&d.length){cats=d;cats.forEach(function(c){c.products.forEach(function(p){if(!p.img)p.img='';if(!p.sv)p.sv=0;});});}
-    else initCats();
-  }catch(e){initCats();}
+    if(raw){
+      var d=JSON.parse(raw);
+      if(Array.isArray(d)&&d.length){
+        cats=d;
+        cats.forEach(function(c){
+          if(!c.deleted)c.deleted=[];
+          c.products.forEach(function(p){if(!p.img)p.img='';if(p.sv===undefined)p.sv=0;if(!p.su)p.su='pieces';});
+        });
+        return;
+      }
+    }
+  }catch(e){}
+  // 2. Try EMBEDDED_DATA (from saved file)
+  if(EMBEDDED_DATA&&Array.isArray(EMBEDDED_DATA)&&EMBEDDED_DATA.length){
+    cats=JSON.parse(JSON.stringify(EMBEDDED_DATA));
+    cats.forEach(function(c){
+      if(!c.deleted)c.deleted=[];
+      c.products.forEach(function(p){if(!p.img)p.img='';if(p.sv===undefined)p.sv=0;if(!p.su)p.su='pieces';});
+    });
+    // Sync to localStorage
+    save();
+    return;
+  }
+  // 3. Default
+  initCats();
 }
+
+/* ── 💾 Save to File ── */
+window.saveToFile=function(){
+  // Get the full HTML source
+  var html=document.documentElement.outerHTML;
+  // Replace EMBEDDED_DATA with current data
+  var dataStr=JSON.stringify(cats);
+  html=html.replace(
+    /var EMBEDDED_DATA\s*=\s*null;/,
+    'var EMBEDDED_DATA = '+dataStr+';'
+  );
+  // Download
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var now=new Date();
+  var stamp=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  a.href=url;
+  a.download='THASSOS_IMPERIAL_'+stamp+'.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Αρχείο αποθηκεύτηκε!');
+};
 
 load();
 if(!cats.length)initCats();
 activeId=cats[0].id;
 
-// ── Duplicate map ──
+/* ── Photo ── */
+function compressImg(file,cb){
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var MAX=400,w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
+      else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      var cv=document.createElement('canvas');
+      cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      cb(cv.toDataURL('image/jpeg',0.75));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+q('fileInp').addEventListener('change',function(){
+  if(!this.files||!this.files[0])return;
+  var file=this.files[0];
+  var ctx=pendPhoto||ovCtx;
+  if(!ctx){this.value='';return;}
+  compressImg(file,function(b64){
+    var c=cats.find(function(x){return x.id===ctx.cid;});
+    var p=c&&c.products.find(function(x){return x.name===ctx.pname;});
+    if(p){
+      p.img=b64;save();
+      if(q('imgOv').classList.contains('open'))q('ovImg').src=b64;
+      renderProducts(q('search').value);
+      renderStats();
+    }
+    pendPhoto=null;
+  });
+  this.value='';
+});
+function triggerPhoto(cid,pname){pendPhoto={cid:cid,pname:pname};q('fileInp').click();}
+
+/* ── Overlay ── */
+window.openImgOv=function(cid,pname){
+  var c=cats.find(function(x){return x.id===cid;});
+  var p=c&&c.products.find(function(x){return x.name===pname;});
+  if(!p||!p.img)return;
+  ovCtx={cid:cid,pname:pname};
+  q('ovName').textContent=pname;q('ovImg').src=p.img;
+  openMod('imgOv');
+};
+window.closeImgOv=function(e){if(!e||e.target.id==='imgOv'){q('imgOv').classList.remove('open');ovCtx=null;}};
+window.ovChangePhoto=function(){if(ovCtx)q('fileInp').click();};
+window.ovRemove=function(){
+  if(!ovCtx)return;
+  var c=cats.find(function(x){return x.id===ovCtx.cid;});
+  var p=c&&c.products.find(function(x){return x.name===ovCtx.pname;});
+  if(p){p.img='';save();}
+  q('imgOv').classList.remove('open');ovCtx=null;
+  renderProducts(q('search').value);renderStats();
+};
+window.removePhoto=function(cid,pname){
+  var c=cats.find(function(x){return x.id===cid;});
+  var p=c&&c.products.find(function(x){return x.name===pname;});
+  if(p){p.img='';save();renderProducts(q('search').value);renderStats();}
+};
+
+/* ── Helpers ── */
 function dupMap(){
   var m={};
   cats.forEach(function(c){c.products.forEach(function(p){var k=p.name.toLowerCase();if(!m[k])m[k]=[];m[k].push({cid:c.id,cname:c.name,p:p});});});
-  var r={};
-  Object.keys(m).forEach(function(k){if(m[k].length>1)r[k]=m[k];});
+  var r={};Object.keys(m).forEach(function(k){if(m[k].length>1)r[k]=m[k];});
   return r;
 }
-
-// ── Stats ──
 function catStats(c){
-  var wq=c.products.filter(function(p){return p.boxes>0||p.sv>0;}).length;
-  var tb=c.products.reduce(function(s,p){return s+(p.boxes||0);},0);
-  var wi=c.products.filter(function(p){return p.img;}).length;
-  return{wq:wq,total:c.products.length,tb:tb,wi:wi};
+  return{
+    wq:c.products.filter(function(p){return p.boxes>0||p.sv>0;}).length,
+    total:c.products.length,
+    tb:c.products.reduce(function(s,p){return s+(p.boxes||0);},0),
+    wi:c.products.filter(function(p){return p.img;}).length
+  };
 }
 function renderStats(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
   var s=catStats(c);
-  q('statsBar').innerHTML='<div class="stat-chip">Σύνολο: <span>'+s.total+'</span></div><div class="stat-chip">Με ποσ/τα: <span>'+s.wq+'</span></div><div class="stat-chip">Κιβώτια: <span>'+s.tb+'</span></div><div class="stat-chip">Με εικόνα: <span>'+s.wi+'</span></div>';
+  q('statsBar').innerHTML=
+    '<div class="stat-chip">Σύνολο: <span>'+s.total+'</span></div>'+
+    '<div class="stat-chip">Με ποσ/τα: <span>'+s.wq+'</span></div>'+
+    '<div class="stat-chip">Κιβώτια: <span>'+s.tb+'</span></div>'+
+    '<div class="stat-chip">Με φωτό: <span>'+s.wi+'</span></div>';
 }
 
-// ── Tabs ──
+/* ── Render ── */
 function renderTabs(){
   q('tabsEl').innerHTML=cats.map(function(c){
     var s=catStats(c);
-    return'<div class="tab'+(c.id===activeId?' active':'')+'" onclick="switchCat(\''+c.id+'\')">'+esc(c.name)+'<span class="tab-badge'+(s.wq===0?' zero':'')+'">'+s.wq+'</span></div>';
+    return'<div class="tab'+(c.id===activeId?' active':'')+'" onclick="switchCat(\''+c.id+'\')">'
+      +esc(c.name)+'<span class="tab-badge'+(s.wq===0?' zero':'')+'">'+s.wq+'</span></div>';
   }).join('');
   var ac=cats.find(function(x){return x.id===activeId;});
   if(ac)q('clearBtn').textContent='🧹 '+ac.name.split(' ')[0];
@@ -289,44 +400,32 @@ function renderProducts(ft){
     var oi=c.products.indexOf(p);
     var ul={pieces:'Τεμάχια',kg:'Κιλά',pallet:'Παλέτα'}[p.su]||'Τεμάχια';
     var st=p.su==='kg'?'0.1':'1';
-    var bv=p.boxes===0?'':p.boxes;
-    var sv=p.sv===0?'':p.sv;
+    var bv=p.boxes===0?'':p.boxes, sv=p.sv===0?'':p.sv;
     var im=p.su==='kg'?'decimal':'numeric';
-    var cid=c.id; var pn=p.name;
-    // safe attrs
-    var safeCid=cid.replace(/'/g,"\\'");
-    var safePn=pn.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-    var key=pn.toLowerCase();
-    var dups=dm[key];
+    var sc=c.id.replace(/'/g,"\\'"), sn=p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var key=p.name.toLowerCase(), dups=dm[key];
     var isDup=false,ocats=[],qaAlert=false;
-    if(dups){var oth=dups.filter(function(e){return e.cid!==cid;});if(oth.length){isDup=true;ocats=oth.map(function(e){return e.cname;});if((p.boxes>0||p.sv>0)&&oth.some(function(e){return e.p.boxes>0||e.p.sv>0;}))qaAlert=true;}}
+    if(dups){var oth=dups.filter(function(e){return e.cid!==c.id;});if(oth.length){isDup=true;ocats=oth.map(function(e){return e.cname;});if((p.boxes>0||p.sv>0)&&oth.some(function(e){return e.p.boxes>0||e.p.sv>0;}))qaAlert=true;}}
     var hq=p.boxes>0||p.sv>0;
-    // thumbnail
-    var phid='ph'+oi+'_'+cid.replace(/[^a-z0-9]/gi,'');
     var thumb=p.img
-      ?'<img class="product-thumb" src="'+esc(p.img)+'" alt="" onclick="openImgOv(\''+safeCid+'\',\''+safePn+'\')" onerror="this.style.display=\'none\'">'
-      :'<div class="product-thumb-ph" id="'+phid+'" onclick="loadImg(\''+safeCid+'\',\''+safePn+'\')"><div class="ico">📷</div><div>AI</div></div>';
+      ?'<div class="thumb-wrap"><img class="product-thumb" src="'+esc(p.img)+'" alt="" onclick="openImgOv(\''+sc+'\',\''+sn+'\')"><button class="thumb-del" onclick="removePhoto(\''+sc+'\',\''+sn+'\')">✕</button></div>'
+      :'<div class="product-thumb-ph" onclick="triggerPhoto(\''+sc+'\',\''+sn+'\')"><div class="ph-ico">📷</div><div>Φωτό</div></div>';
     html+='<div class="product'+(hq&&!isDup?' has-qty':'')+(isDup?' dup-warn':'')+(qaAlert?' dup-alert':'')+'" id="pr_'+oi+'">'
-      +'<div class="product-header">'
-      +thumb
-      +'<div class="product-name">'+esc(pn)+(isDup?'<span class="dup-icon" title="Στις: '+esc(ocats.join(', '))+'">⚠️</span>':'')+'</div>'
+      +'<div class="product-header">'+thumb
+      +'<div class="product-name">'+esc(p.name)+(isDup?'<span class="dup-icon" title="Στις: '+esc(ocats.join(', '))+'">⚠️</span>':'')+'</div>'
       +'<div class="product-actions">'
-      +'<button class="btn-edit" onclick="openEditModal(\''+safeCid+'\','+oi+')">✏️</button>'
-      +'<button class="btn-del2" onclick="delProduct(\''+safeCid+'\','+oi+')">🗑️</button>'
+      +'<button class="btn-edit" onclick="openEditModal(\''+sc+'\','+oi+')">✏️</button>'
+      +'<button class="btn-trash" onclick="delProduct(\''+sc+'\','+oi+')">🗑️</button>'
       +'</div></div>'
       +'<div class="product-controls">'
       +'<div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div>'
-      +'<div class="qty-ctrl" id="bc_'+oi+'">'
-      +'<button onclick="chgQty(\''+safeCid+'\','+oi+',\'b\',-1)">–</button>'
-      +'<input type="number" min="0" step="1" value="'+bv+'" inputmode="numeric" onchange="updQty(\''+safeCid+'\','+oi+',\'b\',this.value)">'
-      +'<button onclick="chgQty(\''+safeCid+'\','+oi+',\'b\',1)">+</button>'
-      +'</div></div>'
-      +'<div class="qty-item"><div class="qty-label" onclick="openUnitModal(\''+safeCid+'\','+oi+')"><span>'+ul+'</span> <span>⚙️</span></div>'
-      +'<div class="qty-ctrl" id="sc_'+oi+'">'
-      +'<button onclick="chgQty(\''+safeCid+'\','+oi+',\'s\',-1)">–</button>'
-      +'<input type="number" min="0" step="'+st+'" value="'+sv+'" inputmode="'+im+'" onchange="updQty(\''+safeCid+'\','+oi+',\'s\',this.value)">'
-      +'<button onclick="chgQty(\''+safeCid+'\','+oi+',\'s\',1)">+</button>'
-      +'</div></div>'
+      +'<div class="qty-ctrl" id="bc_'+oi+'"><button onclick="chgQty(\''+sc+'\','+oi+',\'b\',-1)">–</button>'
+      +'<input type="number" min="0" step="1" value="'+bv+'" inputmode="numeric" onchange="updQty(\''+sc+'\','+oi+',\'b\',this.value)">'
+      +'<button onclick="chgQty(\''+sc+'\','+oi+',\'b\',1)">+</button></div></div>'
+      +'<div class="qty-item"><div class="qty-label" onclick="openUnitModal(\''+sc+'\','+oi+')"><span>'+ul+'</span> <span>⚙️</span></div>'
+      +'<div class="qty-ctrl" id="sc_'+oi+'"><button onclick="chgQty(\''+sc+'\','+oi+',\'s\',-1)">–</button>'
+      +'<input type="number" min="0" step="'+st+'" value="'+sv+'" inputmode="'+im+'" onchange="updQty(\''+sc+'\','+oi+',\'s\',this.value)">'
+      +'<button onclick="chgQty(\''+sc+'\','+oi+',\'s\',1)">+</button></div></div>'
       +'</div></div>';
   });
   el.innerHTML=html;
@@ -337,12 +436,11 @@ function refreshAll(){renderTabs();renderContent();renderProducts(q('search').va
 window.filterTab=function(){renderProducts(q('search').value);};
 window.toggleFilter=function(){filterQty=!filterQty;q('filterBtn').classList.toggle('active',filterQty);renderProducts(q('search').value);};
 
-// ── Quantities ──
+/* ── Quantities ── */
 window.chgQty=function(cid,idx,type,delta){
   var c=cats.find(function(x){return x.id===cid;});if(!c)return;
   var p=c.products[idx];
-  var cur=type==='b'?p.boxes:p.sv;
-  var nv=Math.max(0,cur+delta);
+  var nv=Math.max(0,(type==='b'?p.boxes:p.sv)+delta);
   if(type==='b')p.boxes=nv;else p.sv=nv;
   save();
   var ctrl=q((type==='b'?'bc_':'sc_')+idx);
@@ -362,79 +460,10 @@ window.clearCatQty=function(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
   if(!confirm('Μηδενισμός ποσοτήτων στην κατηγορία "'+c.name+'";'))return;
   c.products.forEach(function(p){p.boxes=0;p.sv=0;});
-  save();refreshAll();
+  save();refreshAll();showToast('✅ Μηδενίστηκε η κατηγορία '+c.name);
 };
 
-// ── AI Images ──
-async function callClaude(prompt){
-  var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:prompt}]})});
-  var d=await res.json();
-  return (d.content||[]).map(function(b){return b.text||'';}).join('').trim();
-}
-async function getImg(name){
-  try{
-    var kw=await callClaude('Translate this Greek grocery/food product name to 2-3 English keywords for image search. Return ONLY the keywords, nothing else: "'+name+'"');
-    var enc=encodeURIComponent(kw.replace(/,/g,' '));
-    var r=await fetch('https://source.unsplash.com/120x120/?'+enc+',food,product',{redirect:'follow'});
-    return r.url;
-  }catch(e){return '';}
-}
-window.loadImg=async function(cid,pname){
-  var c=cats.find(function(x){return x.id===cid;});if(!c)return;
-  var p=c.products.find(function(x){return x.name===pname;});if(!p)return;
-  var idx=c.products.indexOf(p);
-  var phid='ph'+idx+'_'+cid.replace(/[^a-z0-9]/gi,'');
-  var ph=q(phid);if(ph){ph.classList.add('loading');ph.innerHTML='<div class="ico">⏳</div>';}
-  var url=await getImg(pname);
-  if(url){p.img=url;save();renderProducts(q('search').value);}
-  else if(ph){ph.classList.remove('loading');ph.innerHTML='<div class="ico">📷</div><div>AI</div>';}
-};
-window.aiBatchImages=async function(){
-  var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
-  var noImg=c.products.filter(function(p){return!p.img;});
-  if(!noImg.length){alert('Όλα τα προϊόντα έχουν ήδη εικόνα!');return;}
-  if(!confirm('Αυτόματη αναζήτηση εικόνων για '+noImg.length+' προϊόντα;'))return;
-  var prog=q('aiProg'),bar=q('aiBar'),txt=q('aiTxt');
-  prog.style.display='block';
-  for(var i=0;i<noImg.length;i++){
-    var p=noImg[i];
-    txt.textContent='🤖 '+(i+1)+'/'+noImg.length+' — '+p.name;
-    bar.style.width=Math.round(((i+1)/noImg.length)*100)+'%';
-    var url=await getImg(p.name);
-    if(url){p.img=url;save();}
-    await new Promise(function(r){setTimeout(r,400);});
-  }
-  prog.style.display='none';
-  refreshAll();
-};
-
-// ── Image overlay ──
-window.openImgOv=function(cid,pname){
-  var c=cats.find(function(x){return x.id===cid;});
-  var p=c&&c.products.find(function(x){return x.name===pname;});
-  if(!p)return;
-  ovCtx={cid:cid,pname:pname};
-  q('ovName').textContent=pname;q('ovImg').src=p.img||'';
-  q('imgOv').classList.add('open');
-};
-window.closeImgOv=function(e){if(!e||e.target.id==='imgOv'){q('imgOv').classList.remove('open');ovCtx=null;}};
-window.ovRefresh=async function(){
-  if(!ovCtx)return;
-  var img=q('ovImg');img.style.opacity='0.3';
-  var url=await getImg(ovCtx.pname);
-  if(url){var c=cats.find(function(x){return x.id===ovCtx.cid;});var p=c&&c.products.find(function(x){return x.name===ovCtx.pname;});if(p){p.img=url;save();}img.src=url;}
-  img.style.opacity='1';
-  renderProducts(q('search').value);
-};
-window.ovRemove=function(){
-  if(!ovCtx)return;
-  var c=cats.find(function(x){return x.id===ovCtx.cid;});var p=c&&c.products.find(function(x){return x.name===ovCtx.pname;});
-  if(p){p.img='';save();}
-  q('imgOv').classList.remove('open');ovCtx=null;
-  renderProducts(q('search').value);
-};
-
-// ── Products CRUD ──
+/* ── Products CRUD ── */
 window.delProduct=function(cid,idx){
   var c=cats.find(function(x){return x.id===cid;});var p=c.products[idx];
   if(!confirm('Διαγραφή "'+p.name+'";'))return;
@@ -443,11 +472,10 @@ window.delProduct=function(cid,idx){
 };
 window.openAddModal=function(){
   q('newName').value='';q('newName').style.borderColor='';q('dupWarn').textContent='';
-  openModal('addModal');setTimeout(function(){q('newName').focus();},100);
+  openMod('addModal');setTimeout(function(){q('newName').focus();},100);
 };
-window.checkDupName=function(){
-  var name=q('newName').value.trim().toLowerCase();
-  var w=q('dupWarn');
+window.checkDup=function(){
+  var name=q('newName').value.trim().toLowerCase(),w=q('dupWarn');
   if(!name){q('newName').style.borderColor='';w.textContent='';return;}
   var dup=cats.find(function(c){return c.id!==activeId&&c.products.some(function(p){return p.name.toLowerCase()===name;});});
   if(dup){q('newName').style.borderColor='red';w.textContent='⚠️ Υπάρχει στην: '+dup.name;}
@@ -457,40 +485,42 @@ window.addProduct=function(){
   var name=q('newName').value.trim();if(!name){alert('Δώστε όνομα');return;}
   var c=cats.find(function(x){return x.id===activeId;});
   if(c.products.some(function(p){return p.name.toLowerCase()===name.toLowerCase();})){alert('Υπάρχει ήδη');return;}
-  c.products.push({name:name,boxes:0,sv:0,su:'pieces',img:''});
-  q('newName').value='';q('dupWarn').textContent='';
-  closeModal('addModal');save();refreshAll();
+  c.products.push(mkP(name));q('newName').value='';q('dupWarn').textContent='';
+  closeMod('addModal');save();refreshAll();
 };
 window.openEditModal=function(cid,idx){
   var c=cats.find(function(x){return x.id===cid;});
   pendEdit={cid:cid,idx:idx};q('editName').value=c.products[idx].name;
-  openModal('editModal');
+  openMod('editModal');
 };
 window.saveEdit=function(){
   if(!pendEdit)return;
   var newName=q('editName').value.trim();if(!newName){alert('Κενό');return;}
   var c=cats.find(function(x){return x.id===pendEdit.cid;});
   if(c.products.some(function(p,i){return i!==pendEdit.idx&&p.name.toLowerCase()===newName.toLowerCase();})){alert('Υπάρχει ήδη');return;}
-  c.products[pendEdit.idx].name=newName;save();closeModal('editModal');pendEdit=null;refreshAll();
+  c.products[pendEdit.idx].name=newName;save();closeMod('editModal');pendEdit=null;refreshAll();
 };
-window.openUnitModal=function(cid,idx){pendUnit={cid:cid,idx:idx};openModal('unitModal');};
-document.querySelectorAll('.unit-opt').forEach(function(opt){opt.addEventListener('click',function(){
-  if(!pendUnit)return;
-  var c=cats.find(function(x){return x.id===pendUnit.cid;});
-  c.products[pendUnit.idx].su=this.dataset.unit;
-  closeModal('unitModal');pendUnit=null;save();refreshAll();
-});});
+window.openUnitModal=function(cid,idx){pendUnit={cid:cid,idx:idx};openMod('unitModal');};
+document.querySelectorAll('.unit-opt').forEach(function(opt){
+  opt.addEventListener('click',function(){
+    if(!pendUnit)return;
+    cats.find(function(x){return x.id===pendUnit.cid;}).products[pendUnit.idx].su=this.dataset.unit;
+    closeMod('unitModal');pendUnit=null;save();refreshAll();
+  });
+});
 
-// ── Categories ──
-window.openCatMgr=function(){renderCatList();openModal('catModal');};
+/* ── Categories ── */
+window.openCatMgr=function(){renderCatList();openMod('catModal');};
 function renderCatList(){
   q('catList').innerHTML=cats.map(function(c){
-    return'<div class="cat-item"><span class="cat-name">'+esc(c.name)+'</span><div class="cat-actions"><button onclick="renCat(\''+c.id+'\')">✏️</button><button onclick="delCat(\''+c.id+'\')" '+(cats.length<=1?'disabled':'')+'>🗑️</button></div></div>';
+    return'<div class="cat-item"><span class="cat-name">'+esc(c.name)+'</span>'
+      +'<div class="cat-actions"><button onclick="renCat(\''+c.id+'\')">✏️</button>'
+      +'<button onclick="delCat(\''+c.id+'\')" '+(cats.length<=1?'disabled':'')+'>🗑️</button></div></div>';
   }).join('')||'<div style="padding:10px;text-align:center">Καμία</div>';
 }
 window.renCat=function(id){var c=cats.find(function(x){return x.id===id;});var n=prompt('Νέο όνομα:',c.name);if(n&&n.trim()){c.name=n.trim();save();refreshAll();renderCatList();}};
 window.delCat=function(id){
-  if(cats.length<=1){alert('Τουλάχιστον μία.');return;}
+  if(cats.length<=1){alert('Τουλάχιστον μία κατηγορία.');return;}
   if(!confirm('Διαγραφή κατηγορίας;'))return;
   cats=cats.filter(function(c){return c.id!==id;});
   if(activeId===id)activeId=cats[0].id;
@@ -502,7 +532,7 @@ window.addCategory=function(){
   q('newCatName').value='';save();refreshAll();renderCatList();
 };
 
-// ── Deleted ──
+/* ── Deleted ── */
 window.showDeletedModal=function(){
   var html='';
   cats.forEach(function(c){
@@ -518,37 +548,42 @@ window.showDeletedModal=function(){
     });
   });
   q('delList').innerHTML=html||'<div style="text-align:center;padding:20px;">📭 Κανένα</div>';
-  openModal('deletedModal');
+  openMod('deletedModal');
 };
 window.restoreProd=function(cid,i){
   var c=cats.find(function(x){return x.id===cid;});var item=c.deleted[i];
   if(c.products.find(function(p){return p.name===item.name;})){alert('Υπάρχει ήδη.');return;}
-  c.products.push({name:item.name,boxes:0,sv:0,su:item.su,img:''});
-  c.deleted.splice(i,1);save();refreshAll();showDeletedModal();
+  var p=mkP(item.name);p.su=item.su;
+  c.products.push(p);c.deleted.splice(i,1);save();refreshAll();showDeletedModal();
 };
 window.permDel=function(cid,i){
   if(confirm('Οριστική διαγραφή;')){cats.find(function(x){return x.id===cid;}).deleted.splice(i,1);save();showDeletedModal();}
 };
 
-// ── PDF ──
+/* ── PDF ── */
 window.exportPDF=function(){
   var all=[];cats.forEach(function(c){c.products.forEach(function(p){if(p.boxes>0||p.sv>0)all.push({cn:c.name,p:p});});});
   if(!all.length){alert('Κανένα απόθεμα.');return;}
   var gr={};all.forEach(function(x){if(!gr[x.cn])gr[x.cn]=[];gr[x.cn].push(x.p);});
-  function fmt(v,u){if(v===0)return'';return(u==='kg'?v.toFixed(1):v.toFixed(0))+' '+({pieces:'τεμ.',kg:'kg',pallet:'παλ.'}[u]||'');}
+  function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',kg:'kg',pallet:'παλ.'}[u]||'');}
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>THASSOS IMPERIAL</title>'
-    +'<style>body{font-family:sans-serif;font-size:12px;padding:20px}h1{color:#1e3a5f;text-align:center}.dt{text-align:center;margin:4px 0 24px}'
-    +'.cat{margin-top:24px}h2{background:#1e3a5f;color:white;padding:8px 12px;border-radius:8px}'
+    +'<style>body{font-family:sans-serif;font-size:12px;padding:20px}h1{color:#1e3a5f;text-align:center}'
+    +'.dt{text-align:center;margin:4px 0 20px}.cat{margin-top:20px}'
+    +'h2{background:#1e3a5f;color:white;padding:8px 12px;border-radius:8px}'
     +'table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}'
-    +'td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}'
-    +'.g{background:#d4edda!important}.th{width:40px;height:40px;object-fit:cover;border-radius:6px}'
+    +'td{border:1px solid #ccc;padding:6px;vertical-align:middle}'
+    +'td:nth-child(3),td:nth-child(4){text-align:center}.g{background:#d4edda!important}'
+    +'.th{width:40px;height:40px;object-fit:cover;border-radius:6px;display:block}'
     +'@media print{body{margin:.5cm}}</style></head><body>'
     +'<h1>THASSOS IMPERIAL</h1><div class="dt">'+new Date().toLocaleDateString('el-GR')+'</div>';
   Object.keys(gr).forEach(function(cn){
-    html+='<div class="cat"><h2>'+esc(cn)+'</h2><table><thead><tr><th></th><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr></thead><tbody>';
+    html+='<div class="cat"><h2>'+esc(cn)+'</h2>'
+      +'<table><thead><tr><th></th><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr></thead><tbody>';
     gr[cn].forEach(function(p){
-      var th=p.img?'<img class="th" src="'+esc(p.img)+'" alt="">':'';
-      html+='<tr><td>'+th+'</td><td>'+esc(p.name)+'</td><td class="'+(p.boxes>0?'g':'')+'">'+(p.boxes||'')+'</td><td class="'+(p.sv>0?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
+      var th=p.img?'<img class="th" src="'+p.img+'" alt="">':'';
+      html+='<tr><td>'+th+'</td><td>'+esc(p.name)+'</td>'
+        +'<td class="'+(p.boxes>0?'g':'')+'">'+(p.boxes||'')+'</td>'
+        +'<td class="'+(p.sv>0?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
     });
     html+='</tbody></table></div>';
   });
@@ -556,12 +591,11 @@ window.exportPDF=function(){
   var win=window.open('','_blank');win.document.write(html);win.document.close();win.print();
 };
 
-// ── Scroll ──
+/* ── Scroll ── */
 var sb=q('scrollBtn');
 window.addEventListener('scroll',function(){sb.classList.toggle('vis',window.scrollY>300);});
 sb.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
 
-// ── Start ──
 refreshAll();
 </script>
 </body>

@@ -198,7 +198,7 @@ var cats=[], activeId=null, pendUnit=null, pendEdit=null, filterQty=false, ovCtx
  * (`thassos_v8`) so that the page always initializes from the embedded
  * data instead of reusing stale localStorage.
  */
-var SK='thassos_v10';
+var SK='thassos_v12_per_category_clean';
 
 /* ── Default data ── */
 var DEF=[
@@ -351,6 +351,62 @@ function initCats(){
   });
 }
 
+
+function normalizeProductNameForDup(name){
+  return String(name||'')
+    .toLowerCase()
+    .replace(/\s+/g,' ')
+    .replace(/\bγια\b/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function shouldRemoveDuplicateProduct(shortName,longName){
+  var a=normalizeProductNameForDup(shortName);
+  var b=normalizeProductNameForDup(longName);
+  if(!a||!b) return false;
+  if(a===b && String(shortName).length < String(longName).length) return true;
+  if(b.indexOf(a)===0 && b.length>a.length+2) return true;
+  return false;
+}
+function dedupeProductsPerCategory(){
+  cats.forEach(function(c){
+    var kept=[];
+    (c.products||[]).forEach(function(p){
+      var duplicateIndex=-1;
+      for(var i=0;i<kept.length;i++){
+        var existing=kept[i];
+        var pn=normalizeProductNameForDup(p.name);
+        var en=normalizeProductNameForDup(existing.name);
+        if(pn===en){
+          duplicateIndex=i;
+          break;
+        }
+        if(shouldRemoveDuplicateProduct(existing.name,p.name)){
+          duplicateIndex=i;
+          break;
+        }
+        if(shouldRemoveDuplicateProduct(p.name,existing.name)){
+          duplicateIndex=-2;
+          break;
+        }
+      }
+      if(duplicateIndex>=0){
+        var old=kept[duplicateIndex];
+        p.boxes = Number(p.boxes||old.boxes||0);
+        p.sv = Number(p.sv||old.sv||0);
+        p.su = p.su || old.su || 'pieces';
+        p.img = p.img || old.img || '';
+        kept[duplicateIndex]=p;
+      }else if(duplicateIndex===-2){
+        // skip shorter duplicate in the same category
+      }else{
+        kept.push(p);
+      }
+    });
+    c.products=kept;
+  });
+}
+
 /* ── Storage: localStorage + EMBEDDED_DATA ── */
 function save(){
   try{localStorage.setItem(SK,JSON.stringify(cats));}
@@ -419,6 +475,7 @@ if(!cats.length) initCats();
 // the loaded categories. This runs once on load and preserves existing
 // photos and quantities.
 mergeMissing();
+dedupeProductsPerCategory();
 // Persist merged data back to localStorage to avoid re-merging on every refresh
 save();
 activeId=cats[0].id;

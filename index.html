@@ -5,9 +5,15 @@
 <style>
     *{box-sizing:border-box;margin:0;}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f9ff;-webkit-tap-highlight-color:transparent;}
-    header{background:#1e3a5f;color:white;padding:10px 12px;text-align:center;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.1);}
-    header h1{font-size:1.2rem;font-weight:600;letter-spacing:.5px;}
-    .tabs-container{display:flex;align-items:center;background:white;border-bottom:2px solid #1e3a5f;position:sticky;top:48px;z-index:19;}
+    header{background:linear-gradient(135deg,#10243f 0%,#1e3a5f 45%,#56664f 100%);color:white;padding:16px 12px 18px;text-align:center;position:sticky;top:0;z-index:20;box-shadow:0 8px 24px rgba(16,36,63,.25);overflow:hidden;}
+    header:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.24),transparent 38%),linear-gradient(90deg,rgba(255,255,255,.05),transparent,rgba(255,255,255,.06));pointer-events:none;}
+    .brand-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;}
+    .brand-monogram{font-size:28px;font-weight:900;letter-spacing:-4px;line-height:1;color:#f7f1e6;text-shadow:0 2px 8px rgba(0,0,0,.35);border-top:5px solid #f7f1e6;border-bottom:5px solid #f7f1e6;padding:2px 6px 0;min-width:58px;}
+    .brand-title{font-size:1.45rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#fff8ec;text-shadow:0 2px 8px rgba(0,0,0,.35);}
+    .brand-sub{font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#f7f1e6;opacity:.96;}
+    .brand-stars{font-size:.9rem;letter-spacing:3px;color:#fff8ec;line-height:1;}
+    .brand-member{font-size:.7rem;letter-spacing:1.3px;color:#f7f1e6;opacity:.86;}
+    .tabs-container{display:flex;align-items:center;background:white;border-bottom:2px solid #1e3a5f;position:sticky;top:148px;z-index:19;}
     .tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;}
     .tab{flex:1 0 auto;padding:10px 14px;text-align:center;font-weight:600;color:#1e3a5f;cursor:pointer;background:#eef4ff;border-right:1px solid #cdddec;font-size:13px;user-select:none;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:2px;}
     .tab:last-child{border-right:none;}
@@ -17,7 +23,7 @@
     .tab-badge.zero{background:#cbd5e1;color:#64748b;}
     .tab.active .tab-badge.zero{background:#93a3b8;color:white;}
     .manage-cats-btn{background:white;border:none;font-size:20px;padding:0 12px;cursor:pointer;color:#1e3a5f;border-left:1px solid #cdddec;height:100%;display:flex;align-items:center;touch-action:manipulation;}
-    .search-section{background:white;padding:8px 12px 10px;box-shadow:0 2px 5px rgba(0,0,0,.05);position:sticky;top:96px;z-index:18;}
+    .search-section{background:white;padding:8px 12px 10px;box-shadow:0 2px 5px rgba(0,0,0,.05);position:sticky;top:196px;z-index:18;}
     #search{width:100%;padding:10px 14px;font-size:14px;border:1.5px solid #d0ddeb;border-radius:30px;outline:none;background:#fafcff;}
     #search:focus{border-color:#1e3a5f;background:white;}
     .action-bar{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
@@ -95,13 +101,565 @@
     .cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px;background:#f0f7ff;border-radius:14px;margin-bottom:6px;}
     .cat-name{font-weight:600;color:#1e3a5f;font-size:15px;}
     .cat-actions button{background:none;border:none;font-size:22px;margin-left:8px;cursor:pointer;padding:4px;}
+
+    @media(max-width:480px){
+      header{padding:12px 10px 14px;}
+      .brand-monogram{font-size:23px;min-width:50px;border-top-width:4px;border-bottom-width:4px;}
+      .brand-title{font-size:1.15rem;letter-spacing:1.5px;}
+      .brand-sub{font-size:.7rem;letter-spacing:2px;}
+      .brand-member{font-size:.62rem;}
+      .tabs-container{top:128px;}
+      .search-section{top:176px;}
+    }
     @media(max-width:360px){.action-bar button{font-size:10px;padding:7px 0;}.tab{padding:9px 10px;font-size:12px;}}
-  </style>
+  
+    .product.dragging{opacity:.55;transform:scale(.985);box-shadow:0 10px 24px rgba(30,58,95,.25);}
+    .product.drag-over{border-top:4px solid #1e3a5f;}
+    .drag-handle{width:34px;height:34px;border:none;border-radius:50%;background:#eef4ff;color:#1e3a5f;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none;}
+    .drag-handle:active{cursor:grabbing;background:#d8e8ff;}
+    .btn-up,.btn-down{display:none!important;}
+
+  
+    .premium-header{
+      background:linear-gradient(135deg,#0b2139 0%,#173b5c 55%,#0b2139 100%);
+      color:white;
+      padding:10px 12px 12px;
+      text-align:center;
+      position:sticky;
+      top:0;
+      z-index:20;
+      box-shadow:0 4px 18px rgba(0,0,0,.18);
+      border-bottom:1px solid rgba(218,179,82,.35);
+    }
+    .brand-mark{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      max-width:330px;
+      margin:0 auto;
+      padding:4px 10px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .rr-logo{
+      width:76px;
+      height:44px;
+      flex:0 0 auto;
+      filter:drop-shadow(0 3px 8px rgba(0,0,0,.35));
+    }
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      line-height:1;
+      min-width:0;
+    }
+    .brand-title{
+      font-family:Georgia,'Times New Roman',serif;
+      font-size:17px;
+      font-weight:700;
+      letter-spacing:1.3px;
+      color:#fff;
+      white-space:nowrap;
+      text-shadow:0 2px 6px rgba(0,0,0,.35);
+    }
+    .brand-resort{
+      margin-top:4px;
+      font-size:9px;
+      letter-spacing:4px;
+      color:#ffffff;
+      opacity:.9;
+      align-self:center;
+    }
+    .brand-stars{
+      margin-top:3px;
+      font-size:10px;
+      letter-spacing:2px;
+      color:#d7b257;
+      align-self:center;
+    }
+    @media(max-width:360px){
+      .brand-mark{max-width:300px;gap:8px;}
+      .rr-logo{width:66px;height:40px;}
+      .brand-title{font-size:15px;letter-spacing:1px;}
+      .brand-resort{font-size:8px;letter-spacing:3px;}
+    }
+
+  
+    /* Luxury resort header - final logo */
+    .premium-header{
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.25), transparent 35%),
+        linear-gradient(135deg,#101818 0%,#222321 38%,#7f7467 100%);
+      color:#f8f3ea;
+      padding:10px 10px 14px;
+      text-align:center;
+      position:sticky;
+      top:0;
+      z-index:20;
+      box-shadow:0 8px 26px rgba(0,0,0,.22);
+      border-bottom:1px solid rgba(255,255,255,.16);
+    }
+    .lux-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;}
+    .lux-symbol{width:86px;height:54px;display:block;margin:0 auto 2px;}
+    .lux-title{
+      font-family:Georgia,'Times New Roman',serif;
+      font-size:19px;
+      font-weight:700;
+      letter-spacing:2.3px;
+      color:#f6f0e5;
+      text-shadow:0 2px 8px rgba(0,0,0,.45);
+      white-space:nowrap;
+    }
+    .lux-resort{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:5px;color:#f9f4ec;display:flex;align-items:center;gap:9px;text-shadow:0 2px 7px rgba(0,0,0,.45);}
+    .lux-resort span{display:block;width:36px;height:1px;background:linear-gradient(90deg,transparent,#f6f0e5,transparent);opacity:.65;}
+    .lux-stars{margin-top:5px;font-size:12px;letter-spacing:3px;color:#f8f3e8;text-shadow:0 2px 7px rgba(0,0,0,.45);}
+    @media(max-width:380px){
+      .premium-header{padding:8px 8px 12px;}
+      .lux-symbol{width:74px;height:47px;}
+      .lux-title{font-size:16px;letter-spacing:1.7px;}
+      .lux-resort{font-size:9px;letter-spacing:4px;gap:7px;}
+      .lux-resort span{width:26px;}
+      .lux-stars{font-size:10px;}
+    }
+
+  
+    :root{
+      --lux-bg:#090b0d;
+      --lux-panel:#121517;
+      --lux-panel-2:#171b1e;
+      --lux-border:rgba(255,255,255,.10);
+      --lux-text:#f5f5f2;
+      --lux-muted:#b7b7b0;
+      --lux-gold:#d9b77a;
+      --lux-card:rgba(255,255,255,.045);
+    }
+    body{
+      background:#f5f5f3!important;
+      color:var(--lux-text)!important;
+    }
+    .lux-header{
+      position:sticky;top:0;z-index:20;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(255,255,255,.13), transparent 26%),
+        linear-gradient(180deg,#1a1a19 0%,#0f1112 100%)!important;
+      padding:16px 12px 18px!important;
+      text-align:center;
+      border-bottom:1px solid var(--lux-border);
+      box-shadow:0 8px 30px rgba(0,0,0,.35);
+    }
+    .lux-logo-wrap{max-width:360px;margin:0 auto;display:flex;flex-direction:column;align-items:center;}
+    .lux-rr{width:105px;height:54px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.55));}
+    .lux-title{
+      margin-top:6px;
+      font-family:Georgia,'Times New Roman',serif;
+      font-size:24px;
+      letter-spacing:3px;
+      font-weight:500;
+      color:#fff;
+      text-shadow:0 2px 8px rgba(0,0,0,.65);
+      white-space:nowrap;
+    }
+    .lux-resort{
+      margin-top:6px;
+      font-size:13px;
+      letter-spacing:7px;
+      color:#f3f3ef;
+      opacity:.9;
+      text-shadow:0 2px 8px rgba(0,0,0,.55);
+    }
+    .lux-stars{margin-top:6px;font-size:13px;letter-spacing:5px;color:#fff;}
+    .tabs-container{
+      top:153px!important;
+      background:rgba(10,12,14,.92)!important;
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--lux-border)!important;
+    }
+    .tabs{gap:8px;padding:8px 8px;}
+    .tab{
+      background:rgba(255,255,255,.055)!important;
+      color:#f7f7f4!important;
+      border:1px solid var(--lux-border)!important;
+      border-radius:15px!important;
+      padding:10px 14px!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .tab.active{
+      background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04))!important;
+      border-color:rgba(217,183,122,.85)!important;
+      color:#fff!important;
+    }
+    .tab-badge,.tab.active .tab-badge{
+      background:rgba(217,183,122,.18)!important;
+      color:#fff!important;
+      border:1px solid rgba(217,183,122,.35);
+    }
+    .tab-badge.zero,.tab.active .tab-badge.zero{
+      background:rgba(255,255,255,.08)!important;
+      color:#d8d8d2!important;
+      border:1px solid rgba(255,255,255,.09);
+    }
+    .manage-cats-btn{
+      background:rgba(10,12,14,.92)!important;
+      color:#fff!important;
+      border-left:1px solid var(--lux-border)!important;
+    }
+    .search-section{
+      top:218px!important;
+      background:rgba(8,9,10,.9)!important;
+      backdrop-filter:blur(14px);
+      box-shadow:0 8px 20px rgba(0,0,0,.28)!important;
+    }
+    #search{
+      background:rgba(255,255,255,.06)!important;
+      color:#fff!important;
+      border:1px solid rgba(255,255,255,.16)!important;
+      border-radius:22px!important;
+      padding:13px 16px!important;
+    }
+    #search::placeholder{color:#b8b8b2!important;}
+    #search:focus{border-color:rgba(217,183,122,.8)!important;background:rgba(255,255,255,.09)!important;}
+    .action-bar button{
+      border-radius:16px!important;
+      background:rgba(255,255,255,.08)!important;
+      color:#fff!important;
+      border:1px solid rgba(255,255,255,.12)!important;
+      box-shadow:none!important;
+    }
+    .btn-save{background:rgba(217,183,122,.18)!important;border-color:rgba(217,183,122,.45)!important;}
+    .btn-pdf{background:rgba(255,255,255,.07)!important;}
+    .btn-clear{background:rgba(150,35,35,.38)!important;}
+    .btn-filter{background:rgba(217,183,122,.14)!important;}
+    .btn-filter.active{background:rgba(217,183,122,.25)!important;box-shadow:0 0 0 2px rgba(217,183,122,.25)!important;}
+    .btn-del2{background:rgba(255,255,255,.06)!important;}
+    .stats-bar{background:transparent!important;}
+    .stat-chip{
+      background:rgba(255,255,255,.06)!important;
+      color:#e8e8e2!important;
+      border:1px solid rgba(255,255,255,.12)!important;
+    }
+    .stat-chip span{color:#fff!important;}
+    .product{
+      background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.035))!important;
+      border:1px solid rgba(255,255,255,.10)!important;
+      color:#fff!important;
+      border-radius:18px!important;
+      box-shadow:0 10px 24px rgba(0,0,0,.20)!important;
+    }
+    .product-name{color:#fff!important;}
+    .qty-label{color:#dcdcd6!important;}
+    .qty-label span{border-bottom:1px dashed rgba(217,183,122,.7)!important;}
+    .qty-ctrl{background:rgba(0,0,0,.25)!important;}
+    .qty-ctrl button{
+      background:#202326!important;
+      color:#fff!important;
+      border:1px solid rgba(255,255,255,.12)!important;
+    }
+    .qty-ctrl input{
+      background:rgba(255,255,255,.07)!important;
+      color:#fff!important;
+      border:1px solid rgba(255,255,255,.18)!important;
+    }
+    .product-thumb{border-color:rgba(255,255,255,.16)!important;background:#111!important;}
+    .product-thumb-ph{
+      background:rgba(255,255,255,.055)!important;
+      border-color:rgba(255,255,255,.18)!important;
+      color:#d4d4cf!important;
+    }
+    .btn-edit,.btn-trash,.btn-up,.btn-down,.drag-handle{
+      background:rgba(255,255,255,.07)!important;
+      color:#e8e8e2!important;
+      border:1px solid rgba(255,255,255,.10)!important;
+    }
+    .drag-handle{color:var(--lux-gold)!important;}
+    .no-results{background:rgba(255,255,255,.055)!important;color:#d4d4cf!important;border:1px solid rgba(255,255,255,.10);}
+    .footer-note{color:#8e8e88!important;}
+    #scrollBtn{background:#191c1f!important;border:1px solid rgba(217,183,122,.35)!important;color:#fff!important;}
+    .modal-box{background:#121517!important;color:#fff!important;border:1px solid rgba(255,255,255,.12)!important;}
+    .modal-box h3{color:#fff!important;}
+    .modal-box input{background:rgba(255,255,255,.07)!important;color:#fff!important;border:1px solid rgba(255,255,255,.16)!important;}
+    .btn-primary{background:#24282b!important;border:1px solid rgba(217,183,122,.45)!important;}
+    .cat-item{background:rgba(255,255,255,.06)!important;}
+    .cat-name{color:#fff!important;}
+    @media(max-width:420px){
+      .lux-rr{width:86px;height:46px;}
+      .lux-title{font-size:18px;letter-spacing:2px;}
+      .lux-resort{font-size:10px;letter-spacing:5px;}
+      .lux-stars{font-size:11px;}
+      .tabs-container{top:134px!important;}
+      .search-section{top:200px!important;}
+    }
+
+  
+    body{
+      background:#f3f3f1!important;
+      color:#111!important;
+    }
+    .lux-header{
+      background:linear-gradient(180deg,#ffffff 0%,#f0f0ed 100%)!important;
+      border-bottom:1px solid rgba(0,0,0,.08)!important;
+      box-shadow:0 4px 18px rgba(0,0,0,.08)!important;
+    }
+    .lux-title,.lux-resort,.lux-stars{
+      color:#111!important;
+      text-shadow:none!important;
+    }
+    .tabs-container,.search-section{
+      background:rgba(255,255,255,.92)!important;
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(0,0,0,.06)!important;
+    }
+    .tab{
+      background:#fff!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.08)!important;
+    }
+    .tab.active{
+      background:#111!important;
+      color:#fff!important;
+      border-color:#111!important;
+    }
+    .manage-cats-btn{
+      background:#fff!important;
+      color:#111!important;
+    }
+    #search{
+      background:#fff!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.10)!important;
+    }
+    #search::placeholder{color:#666!important;}
+    .action-bar button{
+      background:#fff!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.08)!important;
+    }
+    .product{
+      background:#fff!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.08)!important;
+      box-shadow:0 6px 18px rgba(0,0,0,.05)!important;
+    }
+    .product-name,.qty-label,.cat-name{
+      color:#111!important;
+    }
+    .qty-ctrl button{
+      background:#111!important;
+      color:#fff!important;
+      border:none!important;
+    }
+    .qty-ctrl input{
+      background:#fafafa!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.08)!important;
+    }
+    .btn-edit,.btn-trash,.drag-handle{
+      background:#f5f5f5!important;
+      color:#111!important;
+      border:1px solid rgba(0,0,0,.08)!important;
+    }
+    .product-thumb-ph{
+      background:#f2f2f2!important;
+      color:#666!important;
+    }
+
+
+/* ── Classic original-style theme restored ── */
+body{
+  background:#f5f9ff!important;
+  color:#0f2a44!important;
+}
+.classic-header{
+  background:#1e3a5f!important;
+  color:white!important;
+  padding:12px 12px 10px!important;
+  text-align:center!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:20!important;
+  box-shadow:0 2px 10px rgba(0,0,0,.12)!important;
+}
+.classic-logo{
+  font-size:1.25rem!important;
+  font-weight:700!important;
+  letter-spacing:1.2px!important;
+}
+.classic-sub{
+  margin-top:3px!important;
+  font-size:10px!important;
+  letter-spacing:2.4px!important;
+  opacity:.92!important;
+}
+.tabs-container{
+  top:55px!important;
+  background:white!important;
+  border-bottom:2px solid #1e3a5f!important;
+  box-shadow:none!important;
+}
+.tabs{gap:0!important;padding:0!important;}
+.tab{
+  background:#eef4ff!important;
+  color:#1e3a5f!important;
+  border-right:1px solid #cdddec!important;
+  border-radius:0!important;
+  border-top:none!important;
+  border-bottom:none!important;
+  border-left:none!important;
+  box-shadow:none!important;
+}
+.tab.active{
+  background:#1e3a5f!important;
+  color:white!important;
+  border-color:#1e3a5f!important;
+}
+.tab-badge{
+  background:#f59e0b!important;
+  color:white!important;
+  border:none!important;
+}
+.tab.active .tab-badge{
+  background:#fbbf24!important;
+  color:#1e3a5f!important;
+}
+.tab-badge.zero{
+  background:#cbd5e1!important;
+  color:#64748b!important;
+}
+.tab.active .tab-badge.zero{
+  background:#93a3b8!important;
+  color:white!important;
+}
+.manage-cats-btn{
+  background:white!important;
+  color:#1e3a5f!important;
+  border-left:1px solid #cdddec!important;
+}
+.search-section{
+  top:103px!important;
+  background:white!important;
+  box-shadow:0 2px 5px rgba(0,0,0,.05)!important;
+  backdrop-filter:none!important;
+}
+#search{
+  background:#fafcff!important;
+  color:#0f2a44!important;
+  border:1.5px solid #d0ddeb!important;
+  border-radius:30px!important;
+}
+#search::placeholder{color:#7e9ab5!important;}
+#search:focus{
+  border-color:#1e3a5f!important;
+  background:white!important;
+}
+.action-bar button{
+  background:#2563eb!important;
+  color:white!important;
+  border:none!important;
+  border-radius:30px!important;
+  box-shadow:none!important;
+}
+.btn-save{background:#15803d!important;}
+.btn-pdf{background:#0b3b5c!important;}
+.btn-clear{background:#b91c1c!important;}
+.btn-del2{background:#6b4f3c!important;}
+.btn-filter{background:#059669!important;}
+.btn-filter.active{
+  background:#065f46!important;
+  box-shadow:0 0 0 2px #6ee7b7!important;
+}
+.stat-chip{
+  background:white!important;
+  border:1px solid #d1e3f3!important;
+  color:#1e3a5f!important;
+}
+.stat-chip span{color:#2563eb!important;}
+.product{
+  background:white!important;
+  color:#0f2a44!important;
+  border:1px solid #e2edf7!important;
+  border-radius:18px!important;
+  box-shadow:0 2px 6px rgba(0,0,0,.03)!important;
+}
+.product-name{color:#0f2a44!important;}
+.qty-label{color:#1e3a5f!important;}
+.qty-label span{border-bottom:1px dashed #1e3a5f!important;}
+.qty-ctrl{
+  background:#f0f5fa!important;
+}
+.qty-ctrl button{
+  background:#1e3a5f!important;
+  color:white!important;
+  border:none!important;
+}
+.qty-ctrl input{
+  background:white!important;
+  color:#0f2a44!important;
+  border:1px solid #bdd3e8!important;
+}
+.product-thumb{
+  border-color:#e2edf7!important;
+}
+.product-thumb-ph{
+  background:#f0f5fa!important;
+  color:#7e9ab5!important;
+  border:2px dashed #c5d8ea!important;
+}
+.btn-edit,.btn-trash,.btn-up,.btn-down,.drag-handle{
+  background:none!important;
+  color:#7e9ab5!important;
+  border:none!important;
+}
+.drag-handle{
+  background:#eef4ff!important;
+  color:#1e3a5f!important;
+  border:1px solid #cdddec!important;
+}
+.no-results{
+  background:white!important;
+  color:#5f7d9c!important;
+  border:none!important;
+}
+.modal-box{
+  background:white!important;
+  color:#0f2a44!important;
+  border:none!important;
+}
+.modal-box h3{color:#1e3a5f!important;}
+.modal-box input{
+  background:#f4f9ff!important;
+  color:#0f2a44!important;
+  border:1px solid #cbdbe9!important;
+}
+.btn-primary{
+  background:#1e3a5f!important;
+  color:white!important;
+  border:none!important;
+}
+.cat-item{
+  background:#f0f7ff!important;
+}
+.cat-name{color:#1e3a5f!important;}
+#scrollBtn{
+  background:#1e3a5f!important;
+  color:white!important;
+  border:none!important;
+}
+@media(max-width:420px){
+  .tabs-container{top:55px!important;}
+  .search-section{top:103px!important;}
+}
+
+</style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
 <button id="scrollBtn">⬆️</button>
-<header><h1>THASSOS IMPERIAL</h1></header>
+<header class="classic-header">
+  <div class="classic-logo">THASSOS IMPERIAL</div>
+  <div class="classic-sub">RESORT ★★★★</div>
+</header>
 <div class="tabs-container">
 <div class="tabs" id="tabsEl"><div class="tab active" onclick="switchCat('c1778493725481_0')">Ιορδάνου<span class="tab-badge zero">0</span></div><div class="tab" onclick="switchCat('c1778493725481_1')">Bikre ταβέρνα<span class="tab-badge zero">0</span></div><div class="tab" onclick="switchCat('c1778493725481_2')">Thasos food taverna<span class="tab-badge zero">0</span></div><div class="tab" onclick="switchCat('c1778493725481_3')">Thasosfood ξηρά<span class="tab-badge zero">0</span></div><div class="tab" onclick="switchCat('c1778493725481_4')">Καφέδες<span class="tab-badge zero">0</span></div><div class="tab" onclick="switchCat('c1778493725481_5')">BOSKOS<span class="tab-badge zero">0</span></div></div>
 <button class="manage-cats-btn" onclick="openCatMgr()">📋</button>
@@ -120,7 +678,7 @@
 <input accept="image/*" class="file-inp" id="fileInp" type="file"/>
 <div class="stats-bar" id="statsBar"><div class="stat-chip">Σύνολο: <span>71</span></div><div class="stat-chip">Με ποσ/τα: <span>0</span></div><div class="stat-chip">Κιβώτια: <span>0</span></div><div class="stat-chip">Με φωτό: <span>71</span></div></div>
 <div class="tab-content" id="tabContent"><div class="tab-pane active" id="pane_c1778493725481_0"><div id="list_c1778493725481_0"><div class="product" id="pr_0"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κουτί πίτσας')" src="https://papabros.gr/wp-content/uploads/2024/01/KOUTI_PITSAS_KRAFT_WOOD_36%CE%A736%CE%A74_PAPABROS.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κουτί πίτσας')">✕</button></div><div class="product-name">Κουτί πίτσας</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',0)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',0)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_0"><button onclick="chgQty('c1778493725481_0',0,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',0,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',0,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',0)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_0"><button onclick="chgQty('c1778493725481_0',0,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',0,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',0,'s',1)">+</button></div></div></div></div><div class="product" id="pr_1"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ξυλάκι γκολφ 12εκ')" src="https://sphoreca.gr/wp-content/uploads/2025/12/wp-image5157.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ξυλάκι γκολφ 12εκ')">✕</button></div><div class="product-name">Ξυλάκι γκολφ 12εκ</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',1)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',1)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_1"><button onclick="chgQty('c1778493725481_0',1,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',1,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',1,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',1)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_1"><button onclick="chgQty('c1778493725481_0',1,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',1,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',1,'s',1)">+</button></div></div></div></div><div class="product" id="pr_2"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σκαφάκια craft')" src="https://olaproducts.gr/wp-content/uploads/2022/09/QB23_1-300x225.jpg.webp"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σκαφάκια craft')">✕</button></div><div class="product-name">Σκαφάκια craft</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',2)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',2)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_2"><button onclick="chgQty('c1778493725481_0',2,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',2,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',2,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',2)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_2"><button onclick="chgQty('c1778493725481_0',2,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',2,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',2,'s',1)">+</button></div></div></div></div><div class="product" id="pr_3"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Bowl στρογγυλό')" src="https://cdn.gmhoreca.gr/model/product_m/7281_d7bf90f571ed729988d401d1c2f6fd870a7449fb_image_1920.webp"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Bowl στρογγυλό')">✕</button></div><div class="product-name">Bowl στρογγυλό</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',3)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',3)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_3"><button onclick="chgQty('c1778493725481_0',3,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',3,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',3,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',3)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_3"><button onclick="chgQty('c1778493725481_0',3,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',3,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',3,'s',1)">+</button></div></div></div></div><div class="product" id="pr_4"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Bowl τετράγωνο')" src="https://thumbs.nmstore.gr/thumb/edetorakisv4/1920:webp/604799/products_upload/00045435_1.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Bowl τετράγωνο')">✕</button></div><div class="product-name">Bowl τετράγωνο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',4)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',4)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_5"><button onclick="chgQty('c1778493725481_0',4,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',4,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',4,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',4)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_5"><button onclick="chgQty('c1778493725481_0',4,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',4,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',4,'s',1)">+</button></div></div></div></div><div class="product" id="pr_5"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Λαδόκολλα καφέ 20χ30')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOG96PCl0blk7iqw4knpWD_-BctM_fl4qLn_mTDMn9SA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Λαδόκολλα καφέ 20χ30')">✕</button></div><div class="product-name">Λαδόκολλα καφέ 20χ30</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',5)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',5)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_7"><button onclick="chgQty('c1778493725481_0',5,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',5,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',5,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',5)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_7"><button onclick="chgQty('c1778493725481_0',5,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',5,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',5,'s',1)">+</button></div></div></div></div><div class="product" id="pr_6"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ρολό wypall κανάτα')" src="https://www.acpe.gr/products_img/1763201632_0_7260.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ρολό wypall κανάτα')">✕</button></div><div class="product-name">Ρολό wypall κανάτα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',6)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',6)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_8"><button onclick="chgQty('c1778493725481_0',6,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',6,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',6,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',6)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_8"><button onclick="chgQty('c1778493725481_0',6,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',6,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',6,'s',1)">+</button></div></div></div></div><div class="product" id="pr_7"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σακούλες για πάγο')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPOCJAAJC6egBzTUL5piM_edOZlJqhb3NdiKJi81UQjw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σακούλες για πάγο')">✕</button></div><div class="product-name">Σακούλες για πάγο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',7)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',7)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_11"><button onclick="chgQty('c1778493725481_0',7,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',7,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',7,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',7)"><span>Κιλά</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_11"><button onclick="chgQty('c1778493725481_0',7,'s',-1)">–</button><input inputmode="decimal" min="0" onchange="updQty('c1778493725481_0',7,'s',this.value)" step="0.1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',7,'s',1)">+</button></div></div></div></div><div class="product" id="pr_8"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σακούλες κόκκινες')" src="https://www.b2b-shop.gr/image/cache/catalog/proionta/spiti/eidi-katharismou/sakoules/sakoules-aporimatwn-aromtatikes-me-kordoni-homeex-72x95-set-10tem-5200126294979-3-1000x1000.png"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σακούλες κόκκινες')">✕</button></div><div class="product-name">Σακούλες κόκκινες</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',8)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',8)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_12"><button onclick="chgQty('c1778493725481_0',8,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',8,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',8,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',8)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_12"><button onclick="chgQty('c1778493725481_0',8,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',8,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',8,'s',1)">+</button></div></div></div></div><div class="product" id="pr_9"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σακούλες μπλε')" src="https://kalamaras.gr/wp-content/uploads/2024/03/51409.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σακούλες μπλε')">✕</button></div><div class="product-name">Σακούλες μπλε</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',9)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',9)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_13"><button onclick="chgQty('c1778493725481_0',9,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',9,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',9,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',9)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_13"><button onclick="chgQty('c1778493725481_0',9,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',9,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',9,'s',1)">+</button></div></div></div></div><div class="product" id="pr_10"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ρολό χάρτη 2χ4,5kg')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwu6JdhF-x6tzKSflW-QJNJAGyGuRqEzxU26PFrs08kg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ρολό χάρτη 2χ4,5kg')">✕</button></div><div class="product-name">Ρολό χάρτη 2χ4,5kg</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',10)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',10)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_14"><button onclick="chgQty('c1778493725481_0',10,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',10,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',10,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',10)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_14"><button onclick="chgQty('c1778493725481_0',10,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',10,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',10,'s',1)">+</button></div></div></div></div><div class="product" id="pr_11"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Τραπεζομάντηλα')" src="https://xfood.gr/wp-content/uploads/2024/03/Xartino-Trapezomantilo-Maxi-1x1.3.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Τραπεζομάντηλα')">✕</button></div><div class="product-name">Τραπεζομάντηλα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',11)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',11)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_15"><button onclick="chgQty('c1778493725481_0',11,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',11,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',11,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',11)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_15"><button onclick="chgQty('c1778493725481_0',11,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',11,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',11,'s',1)">+</button></div></div></div></div><div class="product" id="pr_12"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Χαρτοπετσέτες')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvrBHdfd7-22V6beLG5yELqj4CbdLlHr9_ktGTYRFafA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Χαρτοπετσέτες')">✕</button></div><div class="product-name">Χαρτοπετσέτες</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',12)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',12)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_16"><button onclick="chgQty('c1778493725481_0',12,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',12,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',12,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',12)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_16"><button onclick="chgQty('c1778493725481_0',12,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',12,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',12,'s',1)">+</button></div></div></div></div><div class="product" id="pr_13"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ρολό βετεξ μπλε')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDzfweAwqKEKWPb1jeFYEqbFPmPh7gXl2RPLlCOB0h5A&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ρολό βετεξ μπλε')">✕</button></div><div class="product-name">Ρολό βετεξ μπλε</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',13)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',13)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_17"><button onclick="chgQty('c1778493725481_0',13,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',13,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',13,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',13)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_17"><button onclick="chgQty('c1778493725481_0',13,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',13,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',13,'s',1)">+</button></div></div></div></div><div class="product" id="pr_14"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ρολό βετεξ κίτρινο')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHNkvm0yRVi5e3rfMS0U3r4O1_H_9H3Bmn_AiTUqPvxA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ρολό βετεξ κίτρινο')">✕</button></div><div class="product-name">Ρολό βετεξ κίτρινο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',14)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',14)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_18"><button onclick="chgQty('c1778493725481_0',14,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',14,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',14,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',14)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_18"><button onclick="chgQty('c1778493725481_0',14,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',14,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',14,'s',1)">+</button></div></div></div></div><div class="product" id="pr_15"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σύρμα σπιράλ')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnIO0SQ14B6NETI3rhwqjq_0xVyh3w6SRZPkU42HYSEQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σύρμα σπιράλ')">✕</button></div><div class="product-name">Σύρμα σπιράλ</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',15)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',15)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_19"><button onclick="chgQty('c1778493725481_0',15,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',15,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',15,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',15)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_19"><button onclick="chgQty('c1778493725481_0',15,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',15,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',15,'s',1)">+</button></div></div></div></div><div class="product" id="pr_16"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σφουγγάρια μεγάλα 14χ9')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcFrJDwt8FkYrg53e_pN4B4-zz8Jic07Qr5y0U0nLvXA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σφουγγάρια μεγάλα 14χ9')">✕</button></div><div class="product-name">Σφουγγάρια μεγάλα 14χ9</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',16)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',16)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_20"><button onclick="chgQty('c1778493725481_0',16,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',16,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',16,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',16)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_20"><button onclick="chgQty('c1778493725481_0',16,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',16,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',16,'s',1)">+</button></div></div></div></div><div class="product" id="pr_17"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σφουγγάρι 10χ7χ3')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNQRyWxIv8mO4BC73HzEC_HiBYM3XYt6e9KCQjtPq2Xw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σφουγγάρι 10χ7χ3')">✕</button></div><div class="product-name">Σφουγγάρι 10χ7χ3</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',17)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',17)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_21"><button onclick="chgQty('c1778493725481_0',17,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',17,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',17,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',17)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_21"><button onclick="chgQty('c1778493725481_0',17,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',17,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',17,'s',1)">+</button></div></div></div></div><div class="product" id="pr_18"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Μάπα σφουγγαρίστρα')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3rsF9BQYOglj-EZ-TyH6XUiTuwrREdU5SFndaPnb9dg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Μάπα σφουγγαρίστρα')">✕</button></div><div class="product-name">Μάπα σφουγγαρίστρα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',18)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',18)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_22"><button onclick="chgQty('c1778493725481_0',18,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',18,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',18,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',18)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_22"><button onclick="chgQty('c1778493725481_0',18,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',18,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',18,'s',1)">+</button></div></div></div></div><div class="product" id="pr_19"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Solid hero 4,5kg')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbXZMbQnn2uEF_DkP3DKUxYwFQpSwgrj9O9bbWWlm7Pg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Solid hero 4,5kg')">✕</button></div><div class="product-name">Solid hero 4,5kg</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',19)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',19)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_23"><button onclick="chgQty('c1778493725481_0',19,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',19,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',19,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',19)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_23"><button onclick="chgQty('c1778493725481_0',19,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',19,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',19,'s',1)">+</button></div></div></div></div><div class="product" id="pr_20"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Kichen pro duo 2L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkWgBqFDcKWES3H1b4Hv0zz0BF9cOvAdq0OC8WvAK3cw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Kichen pro duo 2L')">✕</button></div><div class="product-name">Kichen pro duo 2L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',20)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',20)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_24"><button onclick="chgQty('c1778493725481_0',20,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',20,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',20,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',20)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_24"><button onclick="chgQty('c1778493725481_0',20,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',20,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',20,'s',1)">+</button></div></div></div></div><div class="product" id="pr_21"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Clear dry hdp plus 5L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8rM9pUkJ7rcwp8SFFHL9txJEpDnb5UWtRMXypurEKzg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Clear dry hdp plus 5L')">✕</button></div><div class="product-name">Clear dry hdp plus 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',21)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',21)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_25"><button onclick="chgQty('c1778493725481_0',21,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',21,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',21,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',21)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_25"><button onclick="chgQty('c1778493725481_0',21,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',21,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',21,'s',1)">+</button></div></div></div></div><div class="product" id="pr_22"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Regain 5L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZbPTIEjn2LikkFhaVQy3-0niHuK1qo776HgAmF01dag&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Regain 5L')">✕</button></div><div class="product-name">Regain 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',22)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',22)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_26"><button onclick="chgQty('c1778493725481_0',22,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',22,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',22,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',22)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_26"><button onclick="chgQty('c1778493725481_0',22,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',22,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',22,'s',1)">+</button></div></div></div></div><div class="product" id="pr_23"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Χλωρίνη παχύρρευστη 5L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLcHe5ZHirTV8ZFS-fIe2OMgD-7OAEGTDoaNYlLNZSRw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Χλωρίνη παχύρρευστη 5L')">✕</button></div><div class="product-name">Χλωρίνη παχύρρευστη 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',23)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',23)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_27"><button onclick="chgQty('c1778493725481_0',23,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',23,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',23,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',23)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_27"><button onclick="chgQty('c1778493725481_0',23,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',23,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',23,'s',1)">+</button></div></div></div></div><div class="product" id="pr_24"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Assert fresh so 5L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsMuw84GuMJzqG7k9qYkd_RMKmrg8GT1QVjq2UpFyKEw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Assert fresh so 5L')">✕</button></div><div class="product-name">Assert fresh so 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',24)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',24)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_28"><button onclick="chgQty('c1778493725481_0',24,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',24,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',24,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',24)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_28"><button onclick="chgQty('c1778493725481_0',24,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',24,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',24,'s',1)">+</button></div></div></div></div><div class="product" id="pr_25"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Assert fresh so 20kg')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5lFIxw1jk0B651qKtMB3GPzCSI25upPsnMHZalN5bXA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Assert fresh so 20kg')">✕</button></div><div class="product-name">Assert fresh so 20kg</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',25)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',25)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_29"><button onclick="chgQty('c1778493725481_0',25,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',25,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',25,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',25)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_29"><button onclick="chgQty('c1778493725481_0',25,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',25,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',25,'s',1)">+</button></div></div></div></div><div class="product" id="pr_26"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Toprinse hd so 20kg')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2GIHy2FqZ66amoZlLSprG-VxpQpDPpCn814GayqCgAw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Toprinse hd so 20kg')">✕</button></div><div class="product-name">Toprinse hd so 20kg</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',26)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',26)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_30"><button onclick="chgQty('c1778493725481_0',26,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',26,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',26,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',26)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_30"><button onclick="chgQty('c1778493725481_0',26,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',26,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',26,'s',1)">+</button></div></div></div></div><div class="product" id="pr_27"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Topmatic crystal so 25kg')" src="https://assets.vario.com.gr/media/catalog/product/cache/5817f4ca5ca420f5a5e824d7b3e65c1c/1/0/10874_1_1732895767_1.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Topmatic crystal so 25kg')">✕</button></div><div class="product-name">Topmatic crystal so 25kg</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',27)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',27)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_31"><button onclick="chgQty('c1778493725481_0',27,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',27,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',27,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',27)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_31"><button onclick="chgQty('c1778493725481_0',27,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',27,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',27,'s',1)">+</button></div></div></div></div><div class="product" id="pr_28"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Αεροζόλ μηχανημάτων')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQciOVVFKn0shon0Md60GWQGClFrhQztqDFNgUm5B12DA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Αεροζόλ μηχανημάτων')">✕</button></div><div class="product-name">Αεροζόλ μηχανημάτων</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',28)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',28)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_32"><button onclick="chgQty('c1778493725481_0',28,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',28,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',28,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',28)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_32"><button onclick="chgQty('c1778493725481_0',28,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',28,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',28,'s',1)">+</button></div></div></div></div><div class="product" id="pr_29"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Imi orange γενική')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3RLH2Tyd_ycQL4yXQjMpf5Q6pzUyEO1pgc7YuPM0utQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Imi orange γενική')">✕</button></div><div class="product-name">Imi orange γενική</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',29)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',29)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_33"><button onclick="chgQty('c1778493725481_0',29,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',29,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',29,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',29)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_33"><button onclick="chgQty('c1778493725481_0',29,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',29,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',29,'s',1)">+</button></div></div></div></div><div class="product" id="pr_30"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Kichen pro des special 2L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpyxP_-czfVQb3mvcchhnVetO2ZhMDaSC6Q0pkvOviVg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Kichen pro des special 2L')">✕</button></div><div class="product-name">Kichen pro des special 2L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',30)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',30)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_34"><button onclick="chgQty('c1778493725481_0',30,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',30,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',30,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',30)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_34"><button onclick="chgQty('c1778493725481_0',30,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',30,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',30,'s',1)">+</button></div></div></div></div><div class="product" id="pr_31"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Greaselift 2L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GTKRn8enF-ou2C-djvdV73c-vk6lFvNVSfF21fsRMw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Greaselift 2L')">✕</button></div><div class="product-name">Greaselift 2L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',31)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',31)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_35"><button onclick="chgQty('c1778493725481_0',31,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',31,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',31,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',31)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_35"><button onclick="chgQty('c1778493725481_0',31,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',31,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',31,'s',1)">+</button></div></div></div></div><div class="product" id="pr_32"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','D-rinse plus 5L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKVuFggL3ntt3BNszJ3NQ4iOvWxy-ZZXAwyw70fr2TbA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','D-rinse plus 5L')">✕</button></div><div class="product-name">D-rinse plus 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',32)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',32)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_36"><button onclick="chgQty('c1778493725481_0',32,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',32,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',32,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',32)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_36"><button onclick="chgQty('c1778493725481_0',32,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',32,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',32,'s',1)">+</button></div></div></div></div><div class="product" id="pr_33"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Drop extra 5L')" src="https://andreou-professional.com/wp-content/uploads/2024/01/ds-301.png"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Drop extra 5L')">✕</button></div><div class="product-name">Drop extra 5L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',33)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',33)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_37"><button onclick="chgQty('c1778493725481_0',33,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',33,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',33,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',33)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_37"><button onclick="chgQty('c1778493725481_0',33,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',33,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',33,'s',1)">+</button></div></div></div></div><div class="product" id="pr_34"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια μαύρα S')" src="https://www.emporico.gr/cdn/shop/files/gantia-nitriliou-mayra-sam.jpg?v=1773665490"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια μαύρα S')">✕</button></div><div class="product-name">Γάντια μαύρα S</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',34)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',34)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_38"><button onclick="chgQty('c1778493725481_0',34,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',34,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',34,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',34)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_38"><button onclick="chgQty('c1778493725481_0',34,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',34,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',34,'s',1)">+</button></div></div></div></div><div class="product" id="pr_35"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια μαύρα M')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp19cKXfVnaKv2T7J_dt1Aqg0fFBF4MHJY9t5G2g5ENA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια μαύρα M')">✕</button></div><div class="product-name">Γάντια μαύρα M</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',35)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',35)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_39"><button onclick="chgQty('c1778493725481_0',35,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',35,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',35,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',35)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_39"><button onclick="chgQty('c1778493725481_0',35,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',35,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',35,'s',1)">+</button></div></div></div></div><div class="product" id="pr_36"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια μαύρα L')" src="https://www.pharmacy1.gr/wp-content/uploads/2025/12/ALFASHIELD-GANTIA-NITRIL-BLACK-L-1.webp"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια μαύρα L')">✕</button></div><div class="product-name">Γάντια μαύρα L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',36)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',36)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_40"><button onclick="chgQty('c1778493725481_0',36,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',36,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',36,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',36)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_40"><button onclick="chgQty('c1778493725481_0',36,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',36,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',36,'s',1)">+</button></div></div></div></div><div class="product" id="pr_37"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια μαύρα Xl')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAQHUj8tvha-6vWsvOAKPuzMkvvRxBUuwmOLySJnTxjA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια μαύρα Xl')">✕</button></div><div class="product-name">Γάντια μαύρα Xl</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',37)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',37)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_41"><button onclick="chgQty('c1778493725481_0',37,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',37,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',37,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',37)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_41"><button onclick="chgQty('c1778493725481_0',37,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',37,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',37,'s',1)">+</button></div></div></div></div><div class="product" id="pr_38"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια με πούδρα Xl')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9RbSfqqTUUF3wX5EffDw0VppMQrUbtJK85WDKe3PftQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια με πούδρα Xl')">✕</button></div><div class="product-name">Γάντια με πούδρα Xl</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',38)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',38)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_42"><button onclick="chgQty('c1778493725481_0',38,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',38,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',38,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',38)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_42"><button onclick="chgQty('c1778493725481_0',38,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',38,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',38,'s',1)">+</button></div></div></div></div><div class="product" id="pr_39"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια κόκκινα Μ')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUSM4SWKjkau77TfZ_8f5xAFWJrw-hh9zqF7zdrk0Yg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια κόκκινα Μ')">✕</button></div><div class="product-name">Γάντια κόκκινα Μ</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',39)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',39)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_43"><button onclick="chgQty('c1778493725481_0',39,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',39,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',39,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',39)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_43"><button onclick="chgQty('c1778493725481_0',39,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',39,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',39,'s',1)">+</button></div></div></div></div><div class="product" id="pr_40"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Γάντια κόκκινα L')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUSM4SWKjkau77TfZ_8f5xAFWJrw-hh9zqF7zdrk0Yg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Γάντια κόκκινα L')">✕</button></div><div class="product-name">Γάντια κόκκινα L</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',40)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',40)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_44"><button onclick="chgQty('c1778493725481_0',40,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',40,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',40,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',40)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_44"><button onclick="chgQty('c1778493725481_0',40,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',40,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',40,'s',1)">+</button></div></div></div></div><div class="product" id="pr_41"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ποτήρι πλαστικό')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz21wT3WMiM8MIp7n0H8nRRcWvdsJSZpWPhZboozz_0A&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ποτήρι πλαστικό')">✕</button></div><div class="product-name">Ποτήρι πλαστικό</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',41)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',41)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_45"><button onclick="chgQty('c1778493725481_0',41,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',41,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',41,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',41)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_45"><button onclick="chgQty('c1778493725481_0',41,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',41,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',41,'s',1)">+</button></div></div></div></div><div class="product" id="pr_42"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καπάκια ποτηριού πλαστικό')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlu0r27N51gDM5GcdbCRiGJ0EKfRX-S3nvGXZ15w5-jA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καπάκια ποτηριού πλαστικό')">✕</button></div><div class="product-name">Καπάκια ποτηριού πλαστικό</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',42)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',42)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_46"><button onclick="chgQty('c1778493725481_0',42,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',42,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',42,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',42)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_46"><button onclick="chgQty('c1778493725481_0',42,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',42,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',42,'s',1)">+</button></div></div></div></div><div class="product" id="pr_43"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Χάρτινο ποτήρι μεγάλο 12oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDej_Kk_T6SHDbaxkpXObLXUpq2NLzL_tUk4e6sdIigw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Χάρτινο ποτήρι μεγάλο 12oz')">✕</button></div><div class="product-name">Χάρτινο ποτήρι μεγάλο 12oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',43)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',43)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_47"><button onclick="chgQty('c1778493725481_0',43,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',43,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',43,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',43)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_47"><button onclick="chgQty('c1778493725481_0',43,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',43,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',43,'s',1)">+</button></div></div></div></div><div class="product" id="pr_44"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καπάκια χάρτινου μεγάλου 12oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStkrxc6XJQEVdisdj6mh77kWtC1ef3rZ3o5GjnEMjYmw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καπάκια χάρτινου μεγάλου 12oz')">✕</button></div><div class="product-name">Καπάκια χάρτινου μεγάλου 12oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',44)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',44)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_48"><button onclick="chgQty('c1778493725481_0',44,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',44,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',44,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',44)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_48"><button onclick="chgQty('c1778493725481_0',44,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',44,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',44,'s',1)">+</button></div></div></div></div><div class="product" id="pr_45"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Χάρτινο ποτήρι μεσαίο 8oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUK3mxcc5EXZtfXkEP63J60XNAEzt-8xiqjdV1nbLTwA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Χάρτινο ποτήρι μεσαίο 8oz')">✕</button></div><div class="product-name">Χάρτινο ποτήρι μεσαίο 8oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',45)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',45)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_49"><button onclick="chgQty('c1778493725481_0',45,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',45,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',45,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',45)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_49"><button onclick="chgQty('c1778493725481_0',45,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',45,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',45,'s',1)">+</button></div></div></div></div><div class="product" id="pr_46"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καπάκι χάρτινου μεσαίου 8oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpQgbUEupyJVXtWD3qKw12KRaT9uu-42uQx1yNbch4mQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καπάκι χάρτινου μεσαίου 8oz')">✕</button></div><div class="product-name">Καπάκι χάρτινου μεσαίου 8oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',46)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',46)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_50"><button onclick="chgQty('c1778493725481_0',46,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',46,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',46,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',46)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_50"><button onclick="chgQty('c1778493725481_0',46,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',46,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',46,'s',1)">+</button></div></div></div></div><div class="product" id="pr_47"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Χάρτινο ποτήρι μικρό 4oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNp7rc2VHXS9CNnjcTRf8GF3jPhrfrzr-6YNrN_wtxZQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Χάρτινο ποτήρι μικρό 4oz')">✕</button></div><div class="product-name">Χάρτινο ποτήρι μικρό 4oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',47)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',47)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_51"><button onclick="chgQty('c1778493725481_0',47,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',47,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',47,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',47)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_51"><button onclick="chgQty('c1778493725481_0',47,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',47,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',47,'s',1)">+</button></div></div></div></div><div class="product" id="pr_48"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καπάκι χάρτινου μικρού4oz')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShFi26LL0UJ3oJjE5yQ6n6gOXaMvLF8N1E6z6s6PoXTw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καπάκι χάρτινου μικρού4oz')">✕</button></div><div class="product-name">Καπάκι χάρτινου μικρού4oz</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',48)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',48)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_52"><button onclick="chgQty('c1778493725481_0',48,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',48,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',48,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',48)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_52"><button onclick="chgQty('c1778493725481_0',48,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',48,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',48,'s',1)">+</button></div></div></div></div><div class="product" id="pr_49"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καλαμάκια χοντρά')" src="https://bizblend.gr/wp-content/uploads/2024/02/%CE%A3%CF%84%CE%B9%CE%B3%CE%BC%CE%B9%CF%8C%CF%84%CF%85%CF%80%CE%BF-%CE%BF%CE%B8%CF%8C%CE%BD%CE%B7%CF%82-2026-04-21-151306.png"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καλαμάκια χοντρά')">✕</button></div><div class="product-name">Καλαμάκια χοντρά</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',49)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',49)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_53"><button onclick="chgQty('c1778493725481_0',49,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',49,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',49,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',49)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_53"><button onclick="chgQty('c1778493725481_0',49,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',49,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',49,'s',1)">+</button></div></div></div></div><div class="product" id="pr_50"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καλαμάκια φραπέ')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoqrYmbJn3_IvmAPgXh0npJljvzd0uWOlrTo00peqX5Q&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καλαμάκια φραπέ')">✕</button></div><div class="product-name">Καλαμάκια φραπέ</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',50)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',50)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_54"><button onclick="chgQty('c1778493725481_0',50,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',50,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',50,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',50)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_54"><button onclick="chgQty('c1778493725481_0',50,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',50,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',50,'s',1)">+</button></div></div></div></div><div class="product" id="pr_51"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Καλαμάκια φρέντο')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSySqOT1102rz19n8wB1yOZubShRP-2yidjH-fEoCOSPA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Καλαμάκια φρέντο')">✕</button></div><div class="product-name">Καλαμάκια φρέντο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',51)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',51)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_55"><button onclick="chgQty('c1778493725481_0',51,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',51,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',51,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',51)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_55"><button onclick="chgQty('c1778493725481_0',51,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',51,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',51,'s',1)">+</button></div></div></div></div><div class="product" id="pr_52"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Αναδευτήρες')" src="https://www.sixtyseconds.gr/datafiles/560.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Αναδευτήρες')">✕</button></div><div class="product-name">Αναδευτήρες</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',52)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',52)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_56"><button onclick="chgQty('c1778493725481_0',52,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',52,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',52,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',52)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_56"><button onclick="chgQty('c1778493725481_0',52,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',52,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',52,'s',1)">+</button></div></div></div></div><div class="product" id="pr_53"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ξυλάκι φιόγκος 12cm')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUqL447u8UAIcgpGg1KFju4p2jwOdU2f6FwQnV2FJGcA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ξυλάκι φιόγκος 12cm')">✕</button></div><div class="product-name">Ξυλάκι φιόγκος 12cm</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',53)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',53)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_57"><button onclick="chgQty('c1778493725481_0',53,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',53,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',53,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',53)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_57"><button onclick="chgQty('c1778493725481_0',53,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',53,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',53,'s',1)">+</button></div></div></div></div><div class="product" id="pr_54"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Μαχαιροπήρουνα')" src="https://bizblend.gr/wp-content/uploads/2024/01/3959736394.webp"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Μαχαιροπήρουνα')">✕</button></div><div class="product-name">Μαχαιροπήρουνα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',54)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',54)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_58"><button onclick="chgQty('c1778493725481_0',54,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',54,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',54,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',54)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_58"><button onclick="chgQty('c1778493725481_0',54,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',54,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',54,'s',1)">+</button></div></div></div></div><div class="product" id="pr_55"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κουταλάκια παγωτού')" src="https://e-malamas.gr/wp-content/uploads/2024/06/%CE%95%CE%9C.7442-removebg-preview-%CE%91%CE%BD%CF%84%CE%B9%CE%B3%CF%81%CE%B1%CF%86%CE%AE.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κουταλάκια παγωτού')">✕</button></div><div class="product-name">Κουταλάκια παγωτού</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',55)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',55)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_59"><button onclick="chgQty('c1778493725481_0',55,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',55,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',55,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',55)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_59"><button onclick="chgQty('c1778493725481_0',55,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',55,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',55,'s',1)">+</button></div></div></div></div><div class="product" id="pr_56"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Ταμπλέτες multi κουβάς')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDL7eElqb9t7lsIZXcfvAxT9JHKPJkwyuZKXm-Ui8gtw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Ταμπλέτες multi κουβάς')">✕</button></div><div class="product-name">Ταμπλέτες multi κουβάς</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',56)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',56)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_60"><button onclick="chgQty('c1778493725481_0',56,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',56,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',56,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',56)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_60"><button onclick="chgQty('c1778493725481_0',56,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',56,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',56,'s',1)">+</button></div></div></div></div><div class="product" id="pr_57"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σοκ κουβάς')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRrrG9EvgmaR75L2npKtC3Nx1BK9cbmTzf-7mrkEvJUQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σοκ κουβάς')">✕</button></div><div class="product-name">Σοκ κουβάς</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',57)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',57)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_61"><button onclick="chgQty('c1778493725481_0',57,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',57,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',57,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',57)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_61"><button onclick="chgQty('c1778493725481_0',57,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',57,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',57,'s',1)">+</button></div></div></div></div><div class="product" id="pr_58"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Λαδόκολλα μεγάλη')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDspelUoSEgKQurbplJBCo_Rd6scOUUj18JA-1RdCeNA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Λαδόκολλα μεγάλη')">✕</button></div><div class="product-name">Λαδόκολλα μεγάλη</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',58)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',58)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_62"><button onclick="chgQty('c1778493725481_0',58,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',58,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',58,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',58)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_62"><button onclick="chgQty('c1778493725481_0',58,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',58,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',58,'s',1)">+</button></div></div></div></div><div class="product" id="pr_59"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σκεύη γιαουρτιού')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ56SqhxYjAP1a71E_JTF2JzM0_whE7ivKP3FdU4a3OlQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σκεύη γιαουρτιού')">✕</button></div><div class="product-name">Σκεύη γιαουρτιού</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',59)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',59)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_63"><button onclick="chgQty('c1778493725481_0',59,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',59,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',59,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',59)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_63"><button onclick="chgQty('c1778493725481_0',59,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',59,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',59,'s',1)">+</button></div></div></div></div><div class="product" id="pr_60"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σκουπα')" src="https://www.sixtyseconds.gr/datafiles/838.jpg"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σκουπα')">✕</button></div><div class="product-name">Σκουπα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',60)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',60)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_64"><button onclick="chgQty('c1778493725481_0',60,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',60,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',60,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',60)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_64"><button onclick="chgQty('c1778493725481_0',60,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',60,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',60,'s',1)">+</button></div></div></div></div><div class="product" id="pr_61"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κοντάρι μικρό πάσο')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQYJS6cP36DT4h3N_3iTDR3lHthz6oveqbiwkV1FXwQg&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κοντάρι μικρό πάσο')">✕</button></div><div class="product-name">Κοντάρι μικρό πάσο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',61)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',61)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_65"><button onclick="chgQty('c1778493725481_0',61,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',61,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',61,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',61)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_65"><button onclick="chgQty('c1778493725481_0',61,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',61,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',61,'s',1)">+</button></div></div></div></div><div class="product" id="pr_62"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Σφουγγαρίστρα')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8gFy2ySE5JJK8XpxpHsOTFymD1L1NjQPQblh2uFwciQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Σφουγγαρίστρα')">✕</button></div><div class="product-name">Σφουγγαρίστρα</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',62)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',62)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_66"><button onclick="chgQty('c1778493725481_0',62,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',62,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',62,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',62)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_66"><button onclick="chgQty('c1778493725481_0',62,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',62,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',62,'s',1)">+</button></div></div></div></div><div class="product" id="pr_63"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κουβάς σφουγγαρίστρας')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0VfM7fnpfZ_OioCJQYTlE5luk0OG07L4BhY07aBXosw&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κουβάς σφουγγαρίστρας')">✕</button></div><div class="product-name">Κουβάς σφουγγαρίστρας</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',63)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',63)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_67"><button onclick="chgQty('c1778493725481_0',63,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',63,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',63,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',63)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_67"><button onclick="chgQty('c1778493725481_0',63,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',63,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',63,'s',1)">+</button></div></div></div></div><div class="product" id="pr_64"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Φαράσι')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJS7IHy1s262zM-R1S1KWuONrRYInU8xGu6B6bARhYsA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Φαράσι')">✕</button></div><div class="product-name">Φαράσι</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',64)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',64)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_68"><button onclick="chgQty('c1778493725481_0',64,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',64,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',64,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',64)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_68"><button onclick="chgQty('c1778493725481_0',64,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',64,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',64,'s',1)">+</button></div></div></div></div><div class="product" id="pr_65"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κοντάρι φαρασιού')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXg8yeqeirL7XfkS7YevTtk57BiPgYhJ-tfuiOoyhSGA&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κοντάρι φαρασιού')">✕</button></div><div class="product-name">Κοντάρι φαρασιού</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',65)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',65)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_69"><button onclick="chgQty('c1778493725481_0',65,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',65,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',65,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',65)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_69"><button onclick="chgQty('c1778493725481_0',65,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',65,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',65,'s',1)">+</button></div></div></div></div><div class="product" id="pr_66"><div class="product-header"><div class="thumb-wrap"><img alt="" class="product-thumb" onclick="openImgOv('c1778493725481_0','Κοντάρι μεγάλου πάσο')" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKCR9EqUET_SeGH9ujTbLf8h3aYwLnYXgT7Bwi4D_RxQ&amp;s=10"/><button class="thumb-del" onclick="removePhoto('c1778493725481_0','Κοντάρι μεγάλου πάσο')">✕</button></div><div class="product-name">Κοντάρι μεγάλου πάσο</div><div class="product-actions"><button class="btn-edit" onclick="openEditModal('c1778493725481_0',66)">✏️</button><button class="btn-trash" onclick="delProduct('c1778493725481_0',66)">🗑️</button></div></div><div class="product-controls"><div class="qty-item"><div class="qty-label"><span>Κιβώτια</span></div><div class="qty-ctrl" id="bc_70"><button onclick="chgQty('c1778493725481_0',66,'b',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',66,'b',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',66,'b',1)">+</button></div></div><div class="qty-item"><div class="qty-label" onclick="openUnitModal('c1778493725481_0',66)"><span>Τεμάχια</span> <span>⚙️</span></div><div class="qty-ctrl" id="sc_70"><button onclick="chgQty('c1778493725481_0',66,'s',-1)">–</button><input inputmode="numeric" min="0" onchange="updQty('c1778493725481_0',66,'s',this.value)" step="1" type="number" value=""/><button onclick="chgQty('c1778493725481_0',66,'s',1)">+</button></div></div></div></div></div></div><div class="tab-pane" id="pane_c1778493725481_1"><div id="list_c1778493725481_1"></div></div><div class="tab-pane" id="pane_c1778493725481_2"><div id="list_c1778493725481_2"></div></div><div class="tab-pane" id="pane_c1778493725481_3"><div id="list_c1778493725481_3"></div></div><div class="tab-pane" id="pane_c1778493725481_4"><div id="list_c1778493725481_4"></div></div><div class="tab-pane" id="pane_c1778493725481_5"><div id="list_c1778493725481_5"></div></div></div>
-<div class="footer-note">THASSOS IMPERIAL · Δυναμική διαχείριση αποθήκης</div>
+<div class="footer-note">THASSOS IMPERIAL RESORT ·  · Δυναμική διαχείριση αποθήκης</div>
 <!-- Image overlay -->
 <div class="overlay" id="imgOv" onclick="closeImgOv(event)">
 <div class="ov-name" id="ovName"></div>
@@ -653,10 +1211,10 @@ function renderProducts(ft){
     var thumb=p.img
       ?'<div class="thumb-wrap"><img class="product-thumb" src="'+esc(p.img)+'" alt="" onclick="openImgOv(\''+sc+'\',\''+sn+'\')"><button class="thumb-del" onclick="removePhoto(\''+sc+'\',\''+sn+'\')">✕</button></div>'
       :'<div class="product-thumb-ph" onclick="triggerPhoto(\''+sc+'\',\''+sn+'\')"><div class="ph-ico">📷</div><div>Φωτό</div></div>';
-    html+='<div class="product'+(hq&&!isDup?' has-qty':'')+(isDup?' dup-warn':'')+(qaAlert?' dup-alert':'')+'" id="pr_'+oi+'">'
+    html+='<div class="product'+(hq&&!isDup?' has-qty':'')+(isDup?' dup-warn':'')+(qaAlert?' dup-alert':'')+'" id="pr_'+oi+'" draggable="true" data-cid="'+sc+'" data-idx="'+oi+'">'
       +'<div class="product-header">'+thumb
       +'<div class="product-name">'+esc(p.name)+(isDup?'<span class="dup-icon" title="Στις: '+esc(ocats.join(', '))+'">⚠️</span>':'')+'</div>'
-      +'<div class="product-actions">'
+      +'<div class="product-actions"><button class="drag-handle" title="Σύρε για αλλαγή σειράς" onpointerdown="startTouchDrag(event,\''+sc+'\','+oi+')">⋮⋮</button>'
       +'<button class="btn-edit" onclick="openEditModal(\''+sc+'\','+oi+')">✏️</button>'
       +'<button class="btn-trash" onclick="delProduct(\''+sc+'\','+oi+')">🗑️</button>'
       /* Up/down buttons for reordering products */
@@ -853,16 +1411,19 @@ window.exportPDF=function(){
   if(!all.length){alert('Κανένα απόθεμα.');return;}
   var gr={};all.forEach(function(x){if(!gr[x.cn])gr[x.cn]=[];gr[x.cn].push(x.p);});
   function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',kg:'kg',pallet:'παλ.'}[u]||'');}
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>THASSOS IMPERIAL</title>'
-    +'<style>body{font-family:sans-serif;font-size:12px;padding:20px}h1{color:#1e3a5f;text-align:center}'
-    +'.dt{text-align:center;margin:4px 0 20px}.cat{margin-top:20px}'
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>THASSOS IMPERIAL RESORT</title>'
+    +'<style>body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}'
+    +'.print-brand{background:linear-gradient(135deg,#10243f,#1e3a5f,#56664f);color:white;text-align:center;border-radius:18px;padding:18px 10px;margin-bottom:16px;box-shadow:0 5px 15px rgba(0,0,0,.15)}'
+    +'.pm{display:inline-block;font-size:27px;font-weight:900;letter-spacing:-4px;border-top:5px solid #fff8ec;border-bottom:5px solid #fff8ec;padding:1px 7px;color:#fff8ec;line-height:1}'
+    +'.pt{font-size:24px;font-weight:800;letter-spacing:2px;margin-top:8px}.ps{font-size:15px;font-weight:800;letter-spacing:3px;margin-top:2px}.stars{letter-spacing:3px;margin-top:5px}.member{font-size:12px;letter-spacing:1.2px;margin-top:4px;opacity:.9}'
+    +'.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}.cat{margin-top:20px}'
     +'h2{background:#1e3a5f;color:white;padding:8px 12px;border-radius:8px}'
     +'table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}'
     +'td{border:1px solid #ccc;padding:6px;vertical-align:middle}'
     +'td:nth-child(3),td:nth-child(4){text-align:center}.g{background:#d4edda!important}'
     +'.th{width:40px;height:40px;object-fit:cover;border-radius:6px;display:block}'
-    +'@media print{body{margin:.5cm}}</style></head><body>'
-    +'<h1>THASSOS IMPERIAL</h1><div class="dt">'+new Date().toLocaleDateString('el-GR')+'</div>';
+    +'@media print{body{margin:.5cm}.print-brand{box-shadow:none}}</style></head><body>'
+    +'<div class="print-brand"><div class="pm">▔ RR ▔</div><div class="pt">THASSOS IMPERIAL</div><div class="ps">RESORT</div><div class="stars">★★★★</div></div><div class="dt">'+new Date().toLocaleDateString('el-GR')+'</div>';
   Object.keys(gr).forEach(function(cn){
     html+='<div class="cat"><h2>'+esc(cn)+'</h2>'
       +'<table><thead><tr><th></th><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr></thead><tbody>';
@@ -874,8 +1435,70 @@ window.exportPDF=function(){
     });
     html+='</tbody></table></div>';
   });
-  html+='<div style="margin-top:30px;text-align:center;color:#6f8fae">THASSOS IMPERIAL</div></body></html>';
+  html+='<div style="margin-top:30px;text-align:center;color:#6f8fae">THASSOS IMPERIAL RESORT · </div></body></html>';
   var win=window.open('','_blank');win.document.write(html);win.document.close();win.print();
+};
+
+
+/* ── Drag & Drop reorder products ── */
+var dragState=null;
+
+function reorderProduct(cid, fromIdx, toIdx){
+  var c=cats.find(function(x){return x.id===cid;});
+  if(!c || fromIdx===toIdx || fromIdx<0 || toIdx<0 || fromIdx>=c.products.length || toIdx>=c.products.length) return;
+  var item=c.products.splice(fromIdx,1)[0];
+  c.products.splice(toIdx,0,item);
+  save();
+  refreshAll();
+}
+
+document.addEventListener('dragstart',function(e){
+  var card=e.target.closest && e.target.closest('.product');
+  if(!card) return;
+  dragState={cid:card.dataset.cid, idx:Number(card.dataset.idx)};
+  card.classList.add('dragging');
+  try{e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain', card.dataset.idx);}catch(_){}
+});
+document.addEventListener('dragend',function(e){
+  document.querySelectorAll('.product.dragging,.product.drag-over').forEach(function(el){el.classList.remove('dragging','drag-over');});
+  dragState=null;
+});
+document.addEventListener('dragover',function(e){
+  var card=e.target.closest && e.target.closest('.product');
+  if(!card || !dragState || card.dataset.cid!==dragState.cid) return;
+  e.preventDefault();
+  document.querySelectorAll('.product.drag-over').forEach(function(el){el.classList.remove('drag-over');});
+  card.classList.add('drag-over');
+});
+document.addEventListener('drop',function(e){
+  var card=e.target.closest && e.target.closest('.product');
+  if(!card || !dragState || card.dataset.cid!==dragState.cid) return;
+  e.preventDefault();
+  reorderProduct(dragState.cid, dragState.idx, Number(card.dataset.idx));
+});
+
+window.startTouchDrag=function(ev,cid,idx){
+  if(!ev.pointerType || ev.pointerType==='mouse') return;
+  ev.preventDefault();
+  var startY=ev.clientY, lastY=startY;
+  var card=ev.target.closest('.product');
+  if(card) card.classList.add('dragging');
+  function move(e){ lastY=e.clientY; }
+  function up(e){
+    document.removeEventListener('pointermove',move);
+    document.removeEventListener('pointerup',up);
+    if(card) card.classList.remove('dragging');
+    var c=cats.find(function(x){return x.id===cid;});
+    if(!c) return;
+    var delta=lastY-startY;
+    var steps=Math.round(delta/95);
+    if(steps!==0){
+      var toIdx=Math.max(0,Math.min(c.products.length-1,idx+steps));
+      reorderProduct(cid,idx,toIdx);
+    }
+  }
+  document.addEventListener('pointermove',move,{passive:false});
+  document.addEventListener('pointerup',up,{once:true});
 };
 
 /* ── Scroll ── */

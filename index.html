@@ -1664,7 +1664,7 @@ window.exportPDF=function(){
   'td{border:1px solid #ccc;padding:6px;vertical-align:middle}td:nth-child(2),td:nth-child(3){text-align:center}.g{background:#d4edda!important}'+
   '@media print{body{margin:.5cm}.print-brand{box-shadow:none}}'+
   '</style></head><body>'+
-  '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="THASSOS IMPERIAL RESORT">':'')+
+  '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+
   '<div class="pdf-title">THASSOS IMPERIAL</div></div><div class="dt">'+new Date().toLocaleDateString('el-GR')+'</div>';
   Object.keys(gr).forEach(function(cn){
     html+='<h2>'+esc(cn)+'</h2><table><tr><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr>';

@@ -1669,7 +1669,7 @@ window.exportPDF=function(){
   Object.keys(gr).forEach(function(cn){
     html+='<h2>'+esc(cn)+'</h2><table><tr><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr>';
     gr[cn].forEach(function(p){
-  html+='<tr><td>'+esc(p.name)+'</td><td>'+((p.boxes||0)||'')+'</td><td class="g">'+fmt(p.sv,p.su)+'</td></tr>';
+  html+='<tr><td>'+esc(p.name)+'</td><td>'+((p.boxes||0)||'')+'</td><td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
 });
     html+='</table>';
   });

@@ -1668,7 +1668,9 @@ window.exportPDF=function(){
   '</div><div class="dt">'+new Date().toLocaleDateString('el-GR')+'</div>';
   Object.keys(gr).forEach(function(cn){
     html+='<h2>'+esc(cn)+'</h2><table><tr><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr>';
-    gr[cn].forEach(function(p){html+='<tr class="g"><td>'+esc(p.name)+'</td><td>'+((p.boxes||0)||'')+'</td><td>'+fmt(p.sv,p.su)+'</td></tr>';});
+    gr[cn].forEach(function(p){
+  html+='<tr><td>'+esc(p.name)+'</td><td>'+((p.boxes||0)||'')+'</td><td class="g">'+fmt(p.sv,p.su)+'</td></tr>';
+});
     html+='</table>';
   });
   html+='</body></html>';

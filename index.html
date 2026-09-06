@@ -1614,7 +1614,9 @@ window.applyFirebaseState=function(remote){
   if(!remote || !Array.isArray(remote.cats) || !remote.cats.length)return;
   var catalogChanged=false;
   window.__applyingRemote=true;
+  var __scrollBefore=window.scrollY||window.pageYOffset||0;
   try{
+    var incomingSameAsLocal = JSON.stringify(remote.cats)===JSON.stringify(cats) && JSON.stringify(remote.orders||[])===JSON.stringify(orders);
     cats=normalizeCatsData(remote.cats);
     orders=Array.isArray(remote.orders)?remote.orders:[];
     catalogTombstones=Array.isArray(remote.catalogTombstones)?remote.catalogTombstones:[];
@@ -1630,7 +1632,12 @@ window.applyFirebaseState=function(remote){
       }catch(e){activeId=cats[0].id;}
     }
     saveLocalCache();
-    try{refreshAll();}catch(e){console.error(e);}
+    if(!incomingSameAsLocal){
+      try{refreshAll();}catch(e){console.error(e);}
+      requestAnimationFrame(function(){window.scrollTo(0,__scrollBefore);});
+    }else{
+      renderTabs();renderStats();
+    }
     if(q('ordersModal')&&q('ordersModal').classList.contains('open'))renderOrdersList();
   }finally{
     window.__applyingRemote=false;

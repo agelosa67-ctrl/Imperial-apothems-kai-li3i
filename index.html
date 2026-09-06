@@ -2178,6 +2178,23 @@ window.saveEdit=function(){
 };
 window.openUnitModal=function(cid,idx){pendUnit={cid:cid,idx:idx};openMod('unitModal');};
 var pendQty=null;
+var __scrollLockY=0;
+function lockBodyScroll(){
+  __scrollLockY=window.scrollY||window.pageYOffset||0;
+  document.body.style.position='fixed';
+  document.body.style.top='-'+__scrollLockY+'px';
+  document.body.style.left='0';
+  document.body.style.right='0';
+  document.body.style.width='100%';
+}
+function unlockBodyScroll(){
+  document.body.style.position='';
+  document.body.style.top='';
+  document.body.style.left='';
+  document.body.style.right='';
+  document.body.style.width='';
+  window.scrollTo(0,__scrollLockY);
+}
 window.openQtyModal=function(cid,idx,type){
   var c=cats.find(function(x){return x.id===cid;});if(!c)return;
   var p=c.products[idx];
@@ -2188,12 +2205,14 @@ window.openQtyModal=function(cid,idx,type){
   q('qtyModalTitle').textContent=label;
   var inp=q('qtyModalInput');
   inp.value=curVal||'';
+  lockBodyScroll();
   openMod('qtyModal');
   inp.focus();
   inp.select();
 };
 window.cancelQtyModal=function(){
   closeMod('qtyModal');
+  unlockBodyScroll();
   pendQty=null;
 };
 window.confirmQtyModal=function(){
@@ -2204,6 +2223,7 @@ window.confirmQtyModal=function(){
   var ctrl=q((pendQty.type==='b'?'bc_':'sc_')+pendQty.idx);
   if(ctrl){var btn=ctrl.querySelector('button[onclick^="openQtyModal"]');if(btn){var n=parseFloat(val)||0;btn.textContent=n;}}
   closeMod('qtyModal');
+  unlockBodyScroll();
   pendQty=null;
 };
 q('qtyModalInput')?.addEventListener('keydown',function(e){if(e.key==='Enter'){confirmQtyModal();}});
@@ -2229,7 +2249,7 @@ document.querySelectorAll('.unit-opt').forEach(function(opt){
 /* ── Saved orders ── */
 window.saveOrder=function(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
-  var items=c.products.filter(function(p){return (p.boxes||0)>0||(p.sv||0)>0;}).map(function(p){
+  var items=c.products.filter(function(p){return !p.isHeader&&((p.boxes||0)>0||(p.sv||0)>0);}).map(function(p){
     return{name:p.name,boxes:p.boxes||0,sv:p.sv||0,su:p.su||'pieces'};
   });
   if(!items.length){alert('Δεν υπάρχει ποσότητα στην τρέχουσα κατηγορία.');return;}
@@ -2272,18 +2292,18 @@ window.deleteOrder=function(id){
   if(!confirm('Διαγραφή αποθηκευμένης παραγγελίας;'))return;
   orders=orders.filter(function(x){return x.id!==id;});save();renderOrdersList();
 };
-function printOrderDocument(title,items,createdAt){
+function printOrderDocument(title,items,createdAt,hideBoxes){
   if(!items||!items.length){alert('Η παραγγελία είναι κενή.');return;}
-  function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',kg:'kg',pallet:'παλ.'}[u]||'');}
+  function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',box:'κιβ.',kg:'kg',pallet:'παλ.'}[u]||'');}
   var logoEl=document.querySelector('.exact-logo-img');var logoSrc=logoEl?logoEl.getAttribute('src'):'';
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title></title><style>'+
     'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
-    '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+esc(orderDate(createdAt||Date.now()))+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th><th>Κιβώτια</th><th>Ποσότητα</th></tr>';
-  items.forEach(function(p){html+='<tr><td>'+esc(p.name)+'</td><td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td><td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';});
+    '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+esc(orderDate(createdAt||Date.now()))+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+'<th>Ποσότητα</th></tr>';
+  items.forEach(function(p){html+='<tr><td>'+esc(p.name)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';});
   html+='</table></body></html>';
   var w=window.open('','_blank');if(!w){alert('Ενεργοποίησε τα pop-ups για PDF/εκτύπωση.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(function(){w.print();},450);
 }
-window.printSavedOrder=function(id){var o=orders.find(function(x){return x.id===id;});if(o)printOrderDocument(o.categoryName||'Παραγγελία',o.items||[],o.createdAt);};
+window.printSavedOrder=function(id){var o=orders.find(function(x){return x.id===id;});if(o)printOrderDocument(o.categoryName||'Παραγγελία',o.items||[],o.createdAt,o.categoryName==='Αργυρίου επιστροφές');};
 
 /* ── Categories ── */
 window.openCatMgr=function(){renderCatList();openMod('catModal');};
@@ -2349,9 +2369,9 @@ window.permDel=function(cid,i){
 /* ── PDF: μόνο η ενεργή κατηγορία ── */
 window.exportPDF=function(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
-  var items=c.products.filter(function(p){return (p.boxes||0)>0||(p.sv||0)>0;});
+  var items=c.products.filter(function(p){return !p.isHeader&&((p.boxes||0)>0||(p.sv||0)>0);});
   if(!items.length){alert('Δεν υπάρχει ποσότητα στην κατηγορία "'+c.name+'".');return;}
-  printOrderDocument(c.name,items,Date.now());
+  printOrderDocument(c.name,items,Date.now(),c.name==='Αργυρίου επιστροφές');
 };
 
 window.startTouchDrag=function(event,cid,idx){

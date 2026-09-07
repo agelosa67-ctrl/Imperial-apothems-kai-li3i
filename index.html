@@ -991,6 +991,10 @@ body{
     <h2>THASSOS IMPERIAL</h2>
     <p>Βάλε τον κωδικό πρόσβασης για να ανοίξει η αποθήκη.</p>
     <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Κωδικός">
+    <label style="display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px;color:#334155;">
+      <input id="rememberMe" type="checkbox" checked style="width:18px;height:18px;">
+      Να με θυμάσαι σε αυτή τη συσκευή
+    </label>
     <button id="loginBtn" type="button">Είσοδος</button>
     <div class="login-error" id="loginError"></div>
     
@@ -2502,8 +2506,11 @@ function startStateSync(){
 
 function unlockApp(){
   window.__simpleAccessGranted = true;
-  try{ localStorage.setItem(SESSION_KEY, '1'); }catch(e){}
-  setCookie(SESSION_KEY, '1');
+  var remember = !document.getElementById('rememberMe') || document.getElementById('rememberMe').checked;
+  if(remember){
+    try{ localStorage.setItem(SESSION_KEY, '1'); }catch(e){}
+    setCookie(SESSION_KEY, '1');
+  }
   showGate(false);
   if(cloudUser) cloudUser.textContent='🔐 123456';
   setStatus(connected ? '🟢 Live · Firebase' : '🟠 Σύνδεση…');

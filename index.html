@@ -2365,6 +2365,14 @@ window.openQtyModal=function(cid,idx,type){
   var ul={pieces:'Τεμάχια',box:'Κιβώτιο',kg:'Κιλά',pallet:'Παλέτα'}[p.su]||'Τεμάχια';
   var label=(type==='b'?'Κιβώτια':ul)+' — '+p.name;
   pendQty={cid:cid,idx:idx,type:type,orig:curVal||0};
+  var _dp=document.getElementById('qtyProductDate'), _dl=document.getElementById('qtyProductDateLabel');
+  if(_dp&&_dl){
+    var _cat=(categories||[]).find(function(x){return x.id===cid;});
+    var _isArg=_cat && _cat.name==='Αργυρίου επιστροφές';
+    _dp.style.display=_isArg?'block':'none';
+    _dl.style.display=_isArg?'block':'none';
+    _dp.value=_isArg?((p.productDate||'')):'';
+  }
   var dateWrap=q('qtyProductDateWrap'), dateInput=q('qtyProductDate');
   var isArgyr=c.name==='Αργυρίου επιστροφές';
   if(dateWrap && dateInput){
@@ -2472,7 +2480,7 @@ function printOrderDocument(title,items,createdAt,hideBoxes){
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title></title><style>'+
     'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
     '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+(hideBoxes?'':'')+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+(hideBoxes?'<th>Ημερομηνία</th>':'')+'<th>Ποσότητα</th></tr>';
-  items.forEach(function(p){var rd=p.returnDate||'';var rdText=rd?rd.split('-').reverse().join('/'):'—';html+='<tr><td>'+esc(p.name)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';});
+  items.forEach(function(p){var rd=p.returnDate||'';var rdText=rd?rd.split('-').reverse().join('/'):'—';html+='<tr><td>'+esc(p.name)+(p.productDate?'<div style="font-size:10px;margin-top:3px">📅 '+esc(p.productDate)+'</div>':'')+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';});
   html+='</table></body></html>';
   var w=window.open('','_blank');if(!w){alert('Ενεργοποίησε τα pop-ups για PDF/εκτύπωση.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(function(){w.print();},450);
 }

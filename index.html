@@ -1086,7 +1086,9 @@ body{
 }
 </style>
 
-
+<style>
+#editReturnDateWrap,#editReturnDate{display:none!important;}
+</style>
 <style>#editReturnDateWrap,#editReturnDate{display:none!important}</style></head>
 <body>
 
@@ -1148,12 +1150,7 @@ body{
 <h3 id="qtyModalTitle">Ποσότητα</h3>
 <div id="qtyProductDateWrap" style="display:none;text-align:left;margin:4px 0 12px;">
 <label for="qtyProductDate" style="display:block;font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:5px;">📅 Ημερομηνία προϊόντος</label>
-<input id="qtyProductDate" type="text" placeholder="π.χ. 18/09/2026" inputmode="numeric" maxlength="8" oninput="formatProductDate(this)" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1.5px solid #cbd5e1;border-radius:12px;font-size:16px;background:#fff;">
-<div id="qtyDateRows" style="display:none;text-align:left;margin-top:10px;">
-  <div style="font-weight:800;font-size:13px;color:#1e3a5f;margin-bottom:6px;">📅 Ημερομηνίες / ποσότητες</div>
-  <div id="qtyDateRowsList"></div>
-  <button type="button" style="width:100%;padding:10px;border:1px solid #bdd3e8;background:#f3f7fb;border-radius:10px;font-weight:700;" onclick="addQtyDateRow()">＋ Προσθήκη ημερομηνίας</button>
-</div>
+<input id="qtyProductDate" type="text" placeholder="π.χ. 02/06/26" inputmode="numeric" maxlength="8" oninput="formatProductDate(this)" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #bdd3e8;border-radius:10px;font-size:16px;background:#fff;">
 </div>
 <input id="qtyModalInput" type="number" min="0" inputmode="numeric" pattern="[0-9]*" style="font-size:28px;text-align:center;width:100%;padding:16px;border:1.5px solid #cbd5e1;border-radius:16px;margin:10px 0 18px;">
 <div style="display:flex;gap:10px;">
@@ -1236,16 +1233,7 @@ body{
 </div>
 
 
-<script>
-function formatProductDate(el){
-  var v = (el.value || '').replace(/\D/g,'').slice(0,6);
-  var out = '';
-  if(v.length <= 2) out = v;
-  else if(v.length <= 4) out = v.slice(0,2) + '/' + v.slice(2);
-  else out = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,6);
-  el.value = out;
-}
-</script>
+
 <script>
 "use strict";
 // Duplicate policy v3: full description + packaging/size + stock unit
@@ -2367,7 +2355,6 @@ window.openQtyModal=function(cid,idx,type){
     dateInput.value=isArgyr?(p.productDate||p.returnDate||''):'';
   }
   q('qtyModalTitle').textContent=label;
-  if(typeof renderQtyDateRows==='function')renderQtyDateRows();
   var inp=q('qtyModalInput');
   inp.value=curVal||'';
   lockBodyScroll();
@@ -2468,57 +2455,13 @@ function printOrderDocument(title,items,createdAt,hideBoxes){
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title></title><style>'+
     'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
     '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+(hideBoxes?'':'')+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+(hideBoxes?'<th>Ημερομηνία</th>':'')+'<th>Ποσότητα</th></tr>';
-  items.forEach(function(p){
-  if(hideBoxes){
-    var batches=Array.isArray(p.returnDates)&&p.returnDates.length?p.returnDates:[{qty:p.sv||0,date:p.productDate||p.returnDate||''}];
-    batches.forEach(function(b){
-      var bq=Number(b.qty||0), bd=(b.date||'').trim()||'—';
-      if(bq||b.date) html+='<tr><td>'+esc(p.name)+'</td><td>'+esc(bd)+'</td><td class="'+(bq?'g':'')+'">'+fmt(bq,p.su)+'</td></tr>';
-    });
-  }else{
-    html+='<tr><td>'+esc(p.name)+'</td><td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td><td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
-  }
-});
-  html+='</table>
-<script>
-(function(){
-  function getArgCat(cid){return (typeof cats!=='undefined')?cats.find(function(x){return x.id===cid;}):null;}
-  function rowsFor(p){
-    if(Array.isArray(p.returnDates) && p.returnDates.length) return p.returnDates;
-    var d=p.productDate||p.returnDate||'';
-    return [{qty:Number(p.sv||0),date:d}];
-  }
-  window.renderQtyDateRows=function(){
-    var wrap=document.getElementById('qtyDateRows'), list=document.getElementById('qtyDateRowsList');
-    if(!wrap||!list||!window.pendQty)return;
-    var c=getArgCat(pendQty.cid), p=c&&c.products[pendQty.idx];
-    var show=!!(c&&c.name==='Αργυρίου επιστροφές'&&p);
-    wrap.style.display=show?'block':'none';
-    if(!show)return;
-    list.innerHTML='';
-    rowsFor(p).forEach(function(r){addQtyDateRow(r.qty,r.date,false);});
-  };
-  window.addQtyDateRow=function(qty,date,focus){
-    var list=document.getElementById('qtyDateRowsList'); if(!list)return;
-    var row=document.createElement('div');
-    row.style.cssText='display:grid;grid-template-columns:72px 1fr 34px;gap:6px;margin-bottom:6px;align-items:center;';
-    row.innerHTML='<input class="qtyDateQty" type="number" min="0" step="1" inputmode="numeric" placeholder="Τεμ." value="'+(qty||'')+'" style="width:100%;box-sizing:border-box;padding:9px;border:1px solid #cbd5e1;border-radius:10px;">'+
-      '<input class="qtyDateVal" type="text" maxlength="8" inputmode="numeric" placeholder="02/06/26" value="'+(date||'')+'" style="width:100%;box-sizing:border-box;padding:9px;border:1px solid #cbd5e1;border-radius:10px;">'+
-      '<button type="button" onclick="this.parentNode.remove()" style="border:0;background:#fee2e2;border-radius:9px;height:36px;font-size:18px;">×</button>';
-    list.appendChild(row);
-    var inp=row.querySelector('.qtyDateVal');
-    inp.addEventListener('input',function(){formatProductDate(inp);});
-    if(focus)inp.focus();
-  };
-  window.collectQtyDateRows=function(){
-    var list=document.getElementById('qtyDateRowsList'); if(!list)return [];
-    return Array.from(list.children).map(function(row){
-      return {qty:Number(row.querySelector('.qtyDateQty').value||0),date:(row.querySelector('.qtyDateVal').value||'').trim()};
-    }).filter(function(r){return r.qty>0 || r.date;});
-  };
-})();
-</script>
-</body></html>';
+  items.forEach(function(p){var rd=p.productDate||p.returnDate||'';var rdText=rd||'—';html+='<tr><td>'+esc(p.name)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';});
+  html+='</table><script>
+function formatProductDate(el){
+  var v=(el.value||'').replace(/\D/g,'').slice(0,6);
+  el.value=v.length<=2?v:(v.length<=4?v.slice(0,2)+'/'+v.slice(2):v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4));
+}
+</script></body></html>';
   var w=window.open('','_blank');if(!w){alert('Ενεργοποίησε τα pop-ups για PDF/εκτύπωση.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(function(){w.print();},450);
 }
 window.printSavedOrder=function(id){var o=orders.find(function(x){return x.id===id;});if(o)printOrderDocument(o.categoryName||'Παραγγελία',o.items||[],o.createdAt,o.categoryName==='Αργυρίου επιστροφές');};

@@ -1678,9 +1678,9 @@ function argBatches(p){
   function norm(r){return{qty:Number(r.qty)||0,date:(r.date||'')};}
   if(p.rdv===2)return rd.map(norm);
   var basic=p.productDate||p.returnDate||'';
-  if(basic&&rd.length){ /* παλιά μορφή: το πρώτο = κύρια με ποσότητα = σύνολο */
-    var ex=rd.slice(1).map(norm),exSum=ex.reduce(function(a,r){return a+r.qty;},0);
-    return [{qty:Math.max(0,sv-exSum),date:rd[0].date||basic}].concat(ex);
+  if(basic&&rd.length){ /* παλιά μορφή: το πρώτο = κύρια (η ποσότητά της είναι το sv), οι υπόλοιπες = επιπλέον */
+    var ex=rd.slice(1).map(norm);
+    return [{qty:sv,date:rd[0].date||basic}].concat(ex);
   }
   /* παλιά μορφή χωρίς κύρια ημερομηνία: sv = κύρια ποσότητα, όλες οι γραμμές = επιπλέον */
   var ex2=rd.map(norm).filter(function(r){return r.qty>0||r.date;});

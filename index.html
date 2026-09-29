@@ -1676,7 +1676,11 @@ function argBatches(p){
   var rd=Array.isArray(p.returnDates)?p.returnDates:[];
   var sv=Number(p.sv)||0;
   function norm(r){return{qty:Number(r.qty)||0,date:(r.date||'')};}
-  if(p.rdv===2)return rd.map(norm);
+  if(p.rdv===2){
+    var ex3=rd.slice(1).map(norm),exSum3=ex3.reduce(function(a,r){return a+r.qty;},0);
+    if(!(sv>0))return[];
+    return [{qty:Math.max(0,sv-exSum3),date:(rd[0]&&rd[0].date)||''}].concat(ex3);
+  }
   var basic=p.productDate||p.returnDate||'';
   if(basic&&rd.length){ /* παλιά μορφή: το πρώτο = κύρια (η ποσότητά της είναι το sv), οι υπόλοιπες = επιπλέον */
     var ex=rd.slice(1).map(norm);
@@ -1688,11 +1692,14 @@ function argBatches(p){
   return [{qty:sv,date:basic}].concat(ex2);
 }
 window.argBatches=argBatches;
+function clearArgDates(p){p.productDate='';p.returnDate='';p.returnDates=[];delete p.rdv;}
 function migrateArgProduct(p){
   if(p.rdv===2)return;
   var bl=argBatches(p);
-  if(!bl.length&&!(Number(p.sv)>0))return;
-  p.returnDates=bl;p.sv=bl.reduce(function(a,r){return a+r.qty;},0);p.rdv=2;
+  if(!bl.length&&!(Number(p.sv)>0)){if(p.returnDates&&p.returnDates.length||p.productDate||p.returnDate)clearArgDates(p);return;}
+  var tot=bl.reduce(function(a,r){return a+r.qty;},0);
+  if(!(tot>0)){p.sv=0;clearArgDates(p);return;}
+  p.returnDates=bl;p.sv=tot;p.rdv=2;
   if(bl[0]){p.productDate=bl[0].date;p.returnDate=bl[0].date;}
 }
 function normalizeCatsData(list){
@@ -2215,7 +2222,7 @@ window.chgQty=function(cid,idx,type,delta){
   var c=cats.find(function(x){return x.id===cid;});if(!c)return;
   var p=c.products[idx];
   var nv=Math.max(0,(type==='b'?p.boxes:p.sv)+delta);
-  if(type==='b')p.boxes=nv;else p.sv=nv;
+  if(type==='b')p.boxes=nv;else{p.sv=nv;if(!(nv>0))clearArgDates(p);}
   save();
   var ctrl=q((type==='b'?'bc_':'sc_')+idx);
   if(ctrl){
@@ -2231,7 +2238,7 @@ window.updQty=function(cid,idx,type,val){
   var c=cats.find(function(x){return x.id===cid;});if(!c)return;
   var p=c.products[idx];
   var num=parseFloat(val);if(isNaN(num)||num<0)num=0;
-  if(type==='b')p.boxes=Math.floor(num);else p.sv=num;
+  if(type==='b')p.boxes=Math.floor(num);else{p.sv=num;if(!(num>0))clearArgDates(p);}
   __lastQtyBlur=Date.now();
   save();renderTabs();renderStats();
   var pe=q('pr_'+idx);if(pe){var hq=p.boxes>0||p.sv>0;if(hq&&!pe.classList.contains('dup-warn'))pe.classList.add('has-qty');else if(!hq)pe.classList.remove('has-qty');}
@@ -2243,7 +2250,7 @@ window.updQty=function(cid,idx,type,val){
 window.clearCatQty=function(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
   if(!confirm('Μηδενισμός ποσοτήτων στην κατηγορία "'+c.name+'";'))return;
-  c.products.forEach(function(p){p.boxes=0;p.sv=0;});
+  c.products.forEach(function(p){p.boxes=0;p.sv=0;clearArgDates(p);});
   save();refreshAll();showToast('✅ Μηδενίστηκε η κατηγορία '+c.name);
 };
 
@@ -2493,7 +2500,7 @@ window.loadOrder=function(id){
   var c=cats.find(function(x){return x.id===o.categoryId;})||cats.find(function(x){return x.name===o.categoryName;});
   if(!c){alert('Η κατηγορία αυτής της παραγγελίας δεν υπάρχει πλέον.');return;}
   if(!confirm('Να φορτωθούν οι ποσότητες της αποθηκευμένης παραγγελίας στην κατηγορία "'+c.name+'";'))return;
-  c.products.forEach(function(p){p.boxes=0;p.sv=0;});
+  c.products.forEach(function(p){p.boxes=0;p.sv=0;clearArgDates(p);});
   (o.items||[]).forEach(function(item){
     var p=c.products.find(function(x){return normalizeText(x.name)===normalizeText(item.name);});
     if(p){p.boxes=item.boxes||0;p.sv=item.sv||0;p.su=item.su||p.su||'pieces';if(c.name==='Αργυρίου επιστροφές'){p.returnDate=item.returnDate||'';p.productDate=item.productDate||p.returnDate||'';p.returnDates=Array.isArray(item.returnDates)?item.returnDates:[];p.rdv=item.rdv||0;if(p.rdv!==2)migrateArgProduct(p);}}

@@ -2488,7 +2488,7 @@ document.querySelectorAll('.unit-opt').forEach(function(opt){
 window.saveOrder=function(){
   var c=cats.find(function(x){return x.id===activeId;});if(!c)return;
   var items=c.products.filter(function(p){return !p.isHeader&&((p.boxes||0)>0||(p.sv||0)>0);}).map(function(p){
-    return{name:p.name,boxes:p.boxes||0,sv:p.sv||0,su:p.su||'pieces',returnDate:p.returnDate||'',productDate:p.productDate||'',returnDates:Array.isArray(p.returnDates)?p.returnDates:[],rdv:p.rdv||0};
+    return{name:p.name,code:p.code||'',boxes:p.boxes||0,sv:p.sv||0,su:p.su||'pieces',returnDate:p.returnDate||'',productDate:p.productDate||'',returnDates:Array.isArray(p.returnDates)?p.returnDates:[],rdv:p.rdv||0};
   });
   if(!items.length){alert('Δεν υπάρχει ποσότητα στην τρέχουσα κατηγορία.');return;}
   var now=Date.now();
@@ -2535,8 +2535,13 @@ function printOrderDocument(title,items,createdAt,hideBoxes){
   function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',box:'κιβ.',kg:'kg',pallet:'παλ.'}[u]||'');}
   var logoEl=document.querySelector('.exact-logo-img');var logoSrc=logoEl?logoEl.getAttribute('src'):'';
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title></title><style>'+
-    'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
+    'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.cd{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.3px;color:#5f7d9c;background:#eaf1f8;border-radius:4px;padding:1px 6px;margin-bottom:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nm{font-weight:600}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
     '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+(hideBoxes?'':'')+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+(hideBoxes?'<th>Ημερομηνία</th>':'')+'<th>Ποσότητα</th></tr>';
+  var _pc=cats.find(function(c){return c.name===title;});
+  function nmCell(p){
+    var code=p.code||((_pc&&(_pc.products.find(function(x){return x.name===p.name;})||{}).code)||'');
+    return (code?'<div class="cd">'+esc(code)+'</div>':'')+'<div class="nm">'+esc(p.name)+'</div>';
+  }
   items.forEach(function(p){
     var bl=(hideBoxes)?argBatches(p):[];
     if(hideBoxes && bl.length){
@@ -2544,11 +2549,11 @@ function printOrderDocument(title,items,createdAt,hideBoxes){
       var totalLabel=bl.length>1?('Σύνολο: '+fmt(totalSame,p.su)):'';
       bl.forEach(function(r){
         var rq=Number(r.qty||0),rd=(r.date||'').trim()||'—';
-        html+='<tr><td>'+(p.code?esc(p.code)+' · ':'')+esc(p.name)+'</td><td>'+esc(rd)+'</td><td class="'+(rq?'g':'')+'">'+fmt(rq,p.su)+(totalLabel?'<div style="font-size:9px;color:#64748b;margin-top:2px;">'+esc(totalLabel)+'</div>':'')+'</td></tr>';
+        html+='<tr><td>'+nmCell(p)+'</td><td>'+esc(rd)+'</td><td class="'+(rq?'g':'')+'">'+fmt(rq,p.su)+(totalLabel?'<div style="font-size:9px;color:#64748b;margin-top:2px;">'+esc(totalLabel)+'</div>':'')+'</td></tr>';
       });
     }else{
       var rd=p.returnDate||'',rdText=rd?rd.split('-').reverse().join('/'):'—';
-      html+='<tr><td>'+(p.code?esc(p.code)+' · ':'')+esc(p.name)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
+      html+='<tr><td>'+nmCell(p)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
     }
   });
   html+='</table></body></html>';

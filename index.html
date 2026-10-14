@@ -1643,6 +1643,15 @@ function mergeMasterCatalog(){
       }
     });
   });
+  /* Κωδικοί ειδών: ταίριαξε με βάση ΜΟΝΟ το όνομα (ανεξάρτητα από μονάδα/tombstones) ώστε να μπαίνουν πάντα στα υπάρχοντα προϊόντα */
+  EMBEDDED_DATA.forEach(function(mc){
+    var c=cats.find(function(x){return x.name===mc.name;});if(!c)return;
+    var codes={};(mc.products||[]).forEach(function(mp){if(mp.code)codes[masterNameKey(mp.name)]=mp.code;});
+    [c.products,c.deleted].forEach(function(list){(list||[]).forEach(function(p){
+      var k=masterNameKey(p.name);
+      if(codes[k]&&p.code!==codes[k]){p.code=codes[k];changed=true;}
+    });});
+  });
   normalizeCatsData(cats);
   return changed;
 }

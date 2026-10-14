@@ -84,7 +84,7 @@
     .dada-row .dada-thumb-ph .ph-ico{font-size:18px;}
     .dada-row .thumb-del{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#ef4444;color:#fff;border:0;font-size:11px;line-height:18px;padding:0;}
     .dada-info{flex:1;min-width:0;}
-    .dada-code{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;color:#5f7d9c;background:#eaf1f8;border-radius:6px;padding:1px 7px;margin-bottom:3px;}
+    .dada-code{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.4px;color:#0f2a4a;background:#dbe8f5;border:1px solid #b6cde3;border-radius:6px;padding:1px 8px;margin-bottom:4px;font-variant-numeric:tabular-nums;}
     .dada-name{font-weight:700;font-size:15px;color:#1e3a5f;line-height:1.25;}
     .dada-actions-row{display:flex;gap:4px;margin-top:4px;}
     .dada-actions-row button{background:none;border:0;font-size:14px;padding:2px 4px;opacity:.55;cursor:pointer;}
@@ -2533,15 +2533,14 @@ window.deleteOrder=function(id){
 function printOrderDocument(title,items,createdAt,hideBoxes){
   if(!items||!items.length){alert('Η παραγγελία είναι κενή.');return;}
   function fmt(v,u){if(!v)return'';return(u==='kg'?parseFloat(v).toFixed(1):Math.floor(v))+' '+({pieces:'τεμ.',box:'κιβ.',kg:'kg',pallet:'παλ.'}[u]||'');}
+  var _pc=cats.find(function(c){return c.name===title;});
+  function codeOf(p){return p.code||((_pc&&(_pc.products.find(function(x){return x.name===p.name;})||{}).code)||'');}
+  var hasCode=items.some(function(p){return !!codeOf(p);});
+  function nmCell(p){return (hasCode?'<td class="cc">'+esc(codeOf(p))+'</td>':'')+'<td class="nn">'+esc(p.name)+'</td>';}
   var logoEl=document.querySelector('.exact-logo-img');var logoSrc=logoEl?logoEl.getAttribute('src'):'';
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title></title><style>'+
-    'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}td:nth-child(2),td:nth-child(3){text-align:center}.cd{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.3px;color:#5f7d9c;background:#eaf1f8;border-radius:4px;padding:1px 6px;margin-bottom:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nm{font-weight:600}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
-    '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+(hideBoxes?'':'')+'</div><h2>'+esc(title)+'</h2><table><tr><th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+(hideBoxes?'<th>Ημερομηνία</th>':'')+'<th>Ποσότητα</th></tr>';
-  var _pc=cats.find(function(c){return c.name===title;});
-  function nmCell(p){
-    var code=p.code||((_pc&&(_pc.products.find(function(x){return x.name===p.name;})||{}).code)||'');
-    return (code?'<div class="cd">'+esc(code)+'</div>':'')+'<div class="nm">'+esc(p.name)+'</div>';
-  }
+    'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:12px;padding:20px;color:#10243f}.print-brand{text-align:center;border-bottom:1px solid #e5e7eb;padding:0 0 14px;margin-bottom:14px}.pdf-logo{width:245px;max-height:82px;object-fit:contain;display:block;margin:0 auto}.dt{text-align:center;margin:4px 0 20px;color:#5f7d9c}h2{background:#f3f6fa;padding:8px 12px;border-radius:8px;border-left:4px solid #10243f}table{width:100%;border-collapse:collapse}th{background:#d9e6f2;padding:8px;border:1px solid #a0bbd0}td{border:1px solid #ccc;padding:6px}table.nc td:nth-child(2),table.nc td:nth-child(3){text-align:center}table.hc td:nth-child(3),table.hc td:nth-child(4){text-align:center}td.cc{white-space:nowrap;font-weight:800;font-size:12px;letter-spacing:.3px;color:#0f2a4a;background:#e3edf7;width:1%;-webkit-print-color-adjust:exact;print-color-adjust:exact}td.nn{font-size:13px;font-weight:600}.g{background:#d4edda!important}@media print{body{margin:.5cm}}</style></head><body>'+
+    '<div class="print-brand">'+(logoSrc?'<img class="pdf-logo" src="'+logoSrc+'" alt="">':'')+'</div><div class="dt">'+(hideBoxes?'':'')+'</div><h2>'+esc(title)+'</h2><table class="'+(hasCode?'hc':'nc')+'"><tr>'+(hasCode?'<th>Κωδικός</th>':'')+'<th>Προϊόν</th>'+(hideBoxes?'':'<th>Κιβώτια</th>')+(hideBoxes?'<th>Ημερομηνία</th>':'')+'<th>Ποσότητα</th></tr>';
   items.forEach(function(p){
     var bl=(hideBoxes)?argBatches(p):[];
     if(hideBoxes && bl.length){
@@ -2549,11 +2548,11 @@ function printOrderDocument(title,items,createdAt,hideBoxes){
       var totalLabel=bl.length>1?('Σύνολο: '+fmt(totalSame,p.su)):'';
       bl.forEach(function(r){
         var rq=Number(r.qty||0),rd=(r.date||'').trim()||'—';
-        html+='<tr><td>'+nmCell(p)+'</td><td>'+esc(rd)+'</td><td class="'+(rq?'g':'')+'">'+fmt(rq,p.su)+(totalLabel?'<div style="font-size:9px;color:#64748b;margin-top:2px;">'+esc(totalLabel)+'</div>':'')+'</td></tr>';
+        html+='<tr>'+nmCell(p)+'<td>'+esc(rd)+'</td><td class="'+(rq?'g':'')+'">'+fmt(rq,p.su)+(totalLabel?'<div style="font-size:9px;color:#64748b;margin-top:2px;">'+esc(totalLabel)+'</div>':'')+'</td></tr>';
       });
     }else{
       var rd=p.returnDate||'',rdText=rd?rd.split('-').reverse().join('/'):'—';
-      html+='<tr><td>'+nmCell(p)+'</td>'+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
+      html+='<tr>'+nmCell(p)+''+(hideBoxes?'':'<td class="'+((p.boxes||0)?'g':'')+'">'+((p.boxes||0)||'')+'</td>')+(hideBoxes?'<td>'+esc(rdText)+'</td>':'')+'<td class="'+(fmt(p.sv,p.su)?'g':'')+'">'+fmt(p.sv,p.su)+'</td></tr>';
     }
   });
   html+='</table></body></html>';

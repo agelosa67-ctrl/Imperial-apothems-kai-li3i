@@ -1305,22 +1305,24 @@ html,body{background:#fff!important;color:var(--ux-text)}
 #uxConfirm button{height:48px;border-radius:14px;font-size:15px;font-weight:700;border:1px solid #e8edf4;background:#fff;color:#10243f}
 #uxConfirm button.yes{background:#b91c1c;border-color:#b91c1c;color:#fff}
 #uxConfirm button:active{transform:scale(.97)}
-</style><style id="ux2026v">
-#uxViewer{position:fixed;inset:0;z-index:1400;background:#fff;display:none;flex-direction:column}
+</style><style id="ux2026w">
+#uxViewer{position:fixed;inset:0;z-index:1400;background:#eef1f6;display:none;flex-direction:column}
 #uxViewer.open{display:flex}
-#uxViewer .vb{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;border-bottom:1px solid #e8edf4;background:#fff}
-#uxViewer .vb button{flex:none;border:1px solid #e8edf4;background:#fff;color:#10243f;border-radius:12px;height:40px;padding:0 14px;font-size:14px;font-weight:700}
-#uxViewer .vt{flex:1;min-width:0;text-align:center;font-weight:800;font-size:15px;color:#10243f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:70px}
-#uxViewer iframe{flex:1;border:0;width:100%;background:#fff;min-height:0}
-#uxViewer .va{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid #e8edf4;background:#fff}
-#uxViewer .va button{height:48px;border-radius:14px;font-size:15px;font-weight:700;border:1px solid #e8edf4;background:#fff;color:#10243f}
+#uxViewer .vb{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;border-bottom:1px solid #e1e7f0;background:#fff}
+#uxViewer .vb button{flex:none;border:1px solid #e1e7f0;background:#fff;color:#10243f;border-radius:12px;height:40px;min-width:40px;padding:0 12px;font-size:15px;font-weight:700}
+#uxViewer .vt{flex:1;min-width:0;text-align:center;font-weight:800;font-size:15px;color:#10243f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#uxVS{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:12px;text-align:center}
+#uxVP{display:inline-block;position:relative;text-align:left;vertical-align:top;background:#fff;box-shadow:0 6px 24px rgba(16,36,63,.18);border-radius:2px;overflow:hidden}
+#uxVF{position:absolute;top:0;left:0;border:0;background:#fff;transform-origin:0 0}
+#uxViewer .va{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid #e1e7f0;background:#fff}
+#uxViewer .va button{height:48px;border-radius:14px;font-size:15px;font-weight:700;border:1px solid #e1e7f0;background:#fff;color:#10243f}
 #uxViewer .va button.pri{background:#10243f;border-color:#10243f;color:#fff}
+#uxViewer button:disabled{opacity:.55}
 #uxViewer button:active{transform:scale(.97)}
-#uxPrintHost{display:none}
-@media print{
- body.ux-printing>*:not(#uxPrintHost){display:none!important}
- body.ux-printing #uxPrintHost{display:block!important}
-}
+#uxZoomRow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:#f4f6fa;border:1px solid #e8edf4;border-radius:14px;padding:8px 8px 8px 14px;font-weight:700;color:#10243f;font-size:14px}
+#uxZoomRow .zc{display:flex;align-items:center;gap:6px}
+#uxZoomRow b{min-width:48px;text-align:center;font-size:14px}
+#uxZoomRow button{width:42px!important;height:42px!important;padding:0!important;font-size:20px!important;border-radius:12px!important;background:#fff!important;border:1px solid #e1e7f0!important;color:#10243f!important}
 </style></head>
 <body style="">
 
@@ -3353,46 +3355,72 @@ if(window.__simpleAccessGranted){
    $('uxSheet').classList.remove('full')};
   g.appendChild(b)}
 })();
-</script><script id="ux2026vjs">
+</script><script id="ux2026wjs">
 (function(){
  var $=function(i){return document.getElementById(i)};
+ /* ===== Μέγεθος προϊόντων (ζουμ) στο Μενού ===== */
+ var g=document.querySelector('#toolsModal .tools-grid');
+ if(g){var o=$('uxZoomRow');if(o)o.remove();
+  var steps=[.85,1,1.15,1.3,1.5],zi=1;
+  try{zi=steps.indexOf(parseFloat(localStorage.getItem('ux_zoom')));if(zi<0)zi=1}catch(e){zi=1}
+  var row=document.createElement('div');row.id='uxZoomRow';
+  row.innerHTML='<span>Μέγεθος προϊόντων</span><div class="zc"><button type="button" id="uxZm">−</button><b id="uxZv">100%</b><button type="button" id="uxZp">+</button></div>';
+  g.insertBefore(row,g.firstChild);
+  var applyZ=function(){var z=steps[zi];['tabContent','statsBar'].forEach(function(i){var e=$(i);if(e)e.style.zoom=(z===1?'':z)});$('uxZv').textContent=Math.round(z*100)+'%';try{localStorage.setItem('ux_zoom',z)}catch(e){}};
+  $('uxZm').onclick=function(){if(zi>0){zi--;applyZ()}};
+  $('uxZp').onclick=function(){if(zi<steps.length-1){zi++;applyZ()}};
+  applyZ()}
+ /* ===== Προβολή και PDF μέσα στην εφαρμογή ===== */
  var orig=window.printOrderDocument;if(typeof orig!=='function')return;
  var v=$('uxViewer');if(v)v.remove();
  v=document.createElement('div');v.id='uxViewer';
- v.innerHTML='<div class="vb"><button type="button" id="uxVBack">‹ Πίσω</button><div class="vt" id="uxVT"></div></div><iframe id="uxVF" sandbox="allow-same-origin" title="Προεπισκόπηση"></iframe><div class="va"><button type="button" id="uxVShare">Κοινοποίηση</button><button type="button" class="pri" id="uxVPdf">PDF / Εκτύπωση</button></div>';
+ v.innerHTML='<div class="vb"><button type="button" id="uxVBack">‹ Πίσω</button><div class="vt" id="uxVT"></div><button type="button" id="uxVm">−</button><button type="button" id="uxVp">+</button></div><div id="uxVS"><div id="uxVP"><iframe id="uxVF" sandbox="allow-same-origin" title="PDF"></iframe></div></div><div class="va"><button type="button" id="uxVSave">Αποθήκευση</button><button type="button" class="pri" id="uxVShare">Κοινοποίηση PDF</button></div>';
  document.body.appendChild(v);
- var cur=null,pushed=false;
- function hide(){v.classList.remove('open');document.body.classList.remove('ux-printing');$('uxVF').srcdoc='';pushed=false}
- function back(){if(pushed){history.back()}else hide()}
+ var cur=null,pushed=false,z=1,H=1123,W=794;
+ function layout(){var S=$('uxVS'),k=Math.min(1.4,(S.clientWidth-24)/W)*z,P=$('uxVP'),f=$('uxVF');
+  f.style.width=W+'px';f.style.height=H+'px';f.style.transform='scale('+k+')';P.style.width=(W*k)+'px';P.style.height=(H*k)+'px'}
+ $('uxVF').onload=function(){try{var d=$('uxVF').contentDocument;if(!d||!d.documentElement)return;H=Math.max(600,d.documentElement.scrollHeight);layout()}catch(e){}};
+ window.addEventListener('resize',function(){if(v.classList.contains('open'))layout()});
+ $('uxVm').onclick=function(){z=Math.max(.6,z/1.25);layout()};
+ $('uxVp').onclick=function(){z=Math.min(3,z*1.25);layout()};
+ function hide(){v.classList.remove('open');$('uxVF').srcdoc='';pushed=false;cur=null}
+ $('uxVBack').onclick=function(){if(pushed)history.back();else hide()};
  window.addEventListener('popstate',function(){if(v.classList.contains('open'))hide()});
- window.addEventListener('afterprint',function(){document.body.classList.remove('ux-printing')});
- $('uxVBack').onclick=back;
- function text(c){
-  var U={pieces:'τεμ',box:'κιβ',kg:'kg',pallet:'παλ'};
-  var d=new Date(c.at||Date.now()).toLocaleDateString('el-GR');
+ /* κείμενο (εφεδρικό, αν δεν υπάρχει σύνδεση για το PDF) */
+ function text(c){var U={pieces:'τεμ',box:'κιβ',kg:'kg',pallet:'παλ'},d=new Date(c.at||Date.now()).toLocaleDateString('el-GR');
   var L=c.items.map(function(p){var u=U[p.su]||'τεμ';
-   if(c.hide){var bl=[];try{bl=argBatches(p)}catch(e){}
-    if(bl.length)return bl.map(function(r){return '• '+(p.code?p.code+' ':'')+p.name+' — '+(r.qty||0)+' '+u+(r.date?' ('+r.date+')':'')}).join('\n')}
-   var a=[];if(p.boxes>0)a.push(p.boxes+' κιβ');if(p.sv>0)a.push(p.sv+' '+u);
-   return '• '+(p.code?p.code+' ':'')+p.name+' — '+a.join(' · ')});
+   if(c.hide){var bl=[];try{bl=argBatches(p)}catch(e){}if(bl.length)return bl.map(function(r){return '• '+p.name+' — '+(r.qty||0)+' '+u+(r.date?' ('+r.date+')':'')}).join('\n')}
+   var a=[];if(p.boxes>0)a.push(p.boxes+' κιβ');if(p.sv>0)a.push(p.sv+' '+u);return '• '+p.name+' — '+a.join(' · ')});
   return 'Παραγγελία — '+c.title+'\n'+d+'\n\n'+L.join('\n')}
- $('uxVShare').onclick=function(){if(!cur)return;var tx=text(cur);
-  if(navigator.share){navigator.share({title:'Παραγγελία — '+cur.title,text:tx}).catch(function(){})}
-  else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){showToast('Αντιγράφηκε η παραγγελία')},function(){})}};
- $('uxVPdf').onclick=function(){if(!cur)return;
-  var d=new DOMParser().parseFromString(cur.html,'text/html');
-  var css=Array.prototype.map.call(d.querySelectorAll('style'),function(s){return s.textContent}).join('\n').replace(/(^|\})\s*body\s*\{/g,'$1.pdfroot{');
-  var h=$('uxPrintHost');if(!h){h=document.createElement('div');h.id='uxPrintHost';document.body.appendChild(h);h.attachShadow({mode:'open'})}
-  h.shadowRoot.innerHTML='<style>'+css+'</style><div class="pdfroot">'+d.body.innerHTML+'</div>';
-  document.body.classList.add('ux-printing');setTimeout(function(){window.print()},150)};
+ function load(src,chk){return chk()?Promise.resolve():new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error('load'))};document.head.appendChild(s)})}
+ function ensure(){return load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(){return window.html2canvas}).then(function(){return load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',function(){return window.jspdf})})}
+ function makePdf(){
+  if(cur.blob)return Promise.resolve(cur.blob);
+  return ensure().then(function(){var b=$('uxVF').contentDocument.body;return html2canvas(b,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false})}).then(function(cv){
+   var d=$('uxVF').contentDocument,b=d.body,br=b.getBoundingClientRect(),bw=br.width,s=cv.width/bw,MM=210/bw,PH=277/MM,total=cv.height/s,starts=[0],ps=0;
+   Array.prototype.forEach.call(d.querySelectorAll('tr'),function(r){var q=r.getBoundingClientRect(),top=q.top-br.top,bot=q.bottom-br.top;if(bot-ps>PH&&top>ps+40){starts.push(top);ps=top}});
+   var pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',compress:true});
+   starts.forEach(function(st,i){var en=i+1<starts.length?starts[i+1]:total,sy=Math.round(st*s),sh=Math.min(Math.round((en-st)*s),cv.height-sy);if(sh<=0)return;
+    var c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;var x=c2.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c2.width,sh);x.drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);
+    if(i>0)pdf.addPage();pdf.addImage(c2.toDataURL('image/jpeg',.92),'JPEG',0,10,210,sh/s*MM)});
+   cur.blob=pdf.output('blob');return cur.blob})}
+ function fname(){var ds=new Date(cur.at||Date.now()).toISOString().slice(0,10);return ('Παραγγελια_'+cur.title+'_'+ds).replace(/[\\\/:*?"<>|]+/g,'').replace(/\s+/g,'_')+'.pdf'}
+ function busy(on){['uxVSave','uxVShare'].forEach(function(i){$(i).disabled=on});if(on)showToast('Δημιουργία PDF…')}
+ function download(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);showToast('Αποθηκεύτηκε το PDF')}
+ function share(bl){var f=new File([bl],fname(),{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:'Παραγγελία — '+cur.title}).catch(function(e){if(!e||e.name!=='AbortError')throw e});
+  download(bl);return Promise.resolve()}
+ function fail(){showToast('Το PDF χρειάζεται σύνδεση — στέλνω κείμενο');if(navigator.share&&cur)navigator.share({title:cur.title,text:text(cur)}).catch(function(){})}
+ $('uxVShare').onclick=function(){if(!cur)return;busy(true);makePdf().then(share).catch(fail).then(function(){busy(false)})};
+ $('uxVSave').onclick=function(){if(!cur)return;busy(true);var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  makePdf().then(function(bl){return ios?share(bl):download(bl)}).catch(fail).then(function(){busy(false)})};
  window.printOrderDocument=function(title,items,createdAt,hideBoxes){
   var buf='',fake={document:{open:function(){},write:function(s){buf+=s},close:function(){}},focus:function(){},print:function(){},close:function(){}};
   var ow=window.open;window.open=function(){return fake};
   try{orig.apply(this,arguments)}catch(e){window.open=ow;return orig.apply(this,arguments)}
-  window.open=ow;
-  if(!buf)return;
-  cur={title:title,items:items,at:createdAt,hide:hideBoxes,html:buf};
-  $('uxVT').textContent=title;$('uxVF').srcdoc=buf;v.classList.add('open');
+  window.open=ow;if(!buf)return;
+  cur={title:title,items:items,at:createdAt,hide:hideBoxes,html:buf};z=1;H=1123;
+  $('uxVT').textContent=title;layout();$('uxVF').srcdoc=buf;v.classList.add('open');
   try{history.pushState({uxv:1},'');pushed=true}catch(e){pushed=false}};
 })();
 </script></body></html>
